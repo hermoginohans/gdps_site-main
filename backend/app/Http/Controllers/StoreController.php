@@ -90,18 +90,17 @@ class StoreController extends Controller
                 return response()->json(['message' => 'Product not found.'], 404);
             }
 
-            $result = (function () use ($url, $slug, $product): array {
-                $detail = Http::acceptJson()->connectTimeout(5)->timeout(15)
+            $detail = Http::acceptJson()->connectTimeout(5)->timeout(15)
                     ->get(rtrim($url, '/').'/'.rawurlencode($slug))->throw()->json();
-                $items = Http::acceptJson()->connectTimeout(5)->timeout(15)
+            $items = Http::acceptJson()->connectTimeout(5)->timeout(15)
                     ->get(dirname($url).'/product-items/'.$product['id'], ['currency_code' => 'PHP'])->throw()->json();
-                if (($detail['code'] ?? null) !== 200 || (int) ($detail['payload']['id'] ?? 0) !== $product['id'] ||
+            if (($detail['code'] ?? null) !== 200 || (int) ($detail['payload']['id'] ?? 0) !== $product['id'] ||
                     ($items['code'] ?? null) !== 200 || ! is_array($items['payload'] ?? null)) {
-                    throw new \UnexpectedValueException('Invalid supplier product details.');
-                }
+                throw new \UnexpectedValueException('Invalid supplier product details.');
+            }
 
-                $product['description'] = $this->cleanDescription($detail['payload']['description'] ?? $product['description']);
-                $product['inputFields'] = collect($detail['payload']['input_format'] ?? [])
+            $product['description'] = $this->cleanDescription($detail['payload']['description'] ?? $product['description']);
+            $product['inputFields'] = collect($detail['payload']['input_format'] ?? [])
                     ->filter(fn ($field): bool => is_array($field) && is_string($field['name'] ?? null))
                     ->map(fn (array $field): array => [
                         'name' => $field['name'],
@@ -113,7 +112,7 @@ class StoreController extends Controller
                             'label' => (string) (is_array($option) ? ($option['label'] ?? $option['value'] ?? '') : $option),
                         ])->values()->all(),
                     ])->values()->all();
-                $product['packages'] = collect($items['payload'])->map(function (array $item): array {
+            $product['packages'] = collect($items['payload'])->map(function (array $item): array {
                     if (! isset($item['id'], $item['name']) || ! is_numeric($item['total_price'] ?? null) || $item['total_price'] < 0) {
                         throw new \UnexpectedValueException('Invalid supplier item.');
                     }
@@ -125,18 +124,17 @@ class StoreController extends Controller
                         'stock' => $item['stock'] ?? null,
                     ];
                 })->values()->all();
-                $prices = array_column($product['packages'], 'price');
-                $product['minPrice'] = $prices ? min($prices) : null;
-                $product['maxPrice'] = $prices ? max($prices) : null;
+            $prices = array_column($product['packages'], 'price');
+            $product['minPrice'] = $prices ? min($prices) : null;
+            $product['maxPrice'] = $prices ? max($prices) : null;
 
-                return $product;
-            })();
+            $result = $product;
 
             return response()->json(['product' => $result]);
         } catch (\Throwable $exception) {
             report($exception);
 
-            return response()->json(['message' => 'Game details are temporarily unavailable. Please try again.', 'debug' => $exception->getMessage()], 503);
+            return response()->json(['message' => 'Game details are temporarily unavailable. Please try again.'], 503);
         }
     }
 

@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Password as PasswordBroker;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -43,7 +45,20 @@ class AuthController extends Controller
         ]);
 
         try {
-            $user = User::create($validated);
+            $userColumns = Schema::getColumnListing('users');
+            $userData = [
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => Hash::make($validated['password']),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+            if (in_array('account_status', $userColumns, true)) $userData['account_status'] = 'active';
+            if (in_array('first_login', $userColumns, true)) $userData['first_login'] = false;
+            if (in_array('is_admin', $userColumns, true)) $userData['is_admin'] = false;
+            if (in_array('loyalty_points', $userColumns, true)) $userData['loyalty_points'] = 0;
+            $userId = DB::table('users')->insertGetId($userData);
+            $user = User::findOrFail($userId);
         } catch (\Throwable $exception) {
             report($exception);
 

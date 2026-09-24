@@ -4,6 +4,7 @@ import { AdminOrders } from '../components/common/AdminOrders';
 import { AdminStreamerCodes } from '../components/common/AdminStreamerCodes';
 import { AdminExchangeRates } from '../components/common/AdminExchangeRates';
 import { AdminOperations } from '../components/common/AdminOperations';
+import { AdminCatalogStatistics } from '../components/common/AdminCatalogStatistics';
 import { AdminSupportInbox } from '../components/common/AdminSupportInbox';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -121,7 +122,8 @@ export function AdminPage() {
       {section.id === 'payments' && <AdminPaymentMethods />}
       {section.id === 'exchange-rates' && <AdminExchangeRates />}
       {editingUser && <AdminUserEditor roles={records?.roles ?? []} programFlagsSupported={records?.userProgramFlagsSupported ?? false} user={editingUser} onClose={() => setEditingUser(null)} onSaved={async () => { setEditingUser(null); setRecords(await apiRequest('/api/admin')); }} />}
-      {['providers', 'reports', 'statistics'].includes(section.id) && <AdminOperations />}
+      {['providers', 'reports'].includes(section.id) && <AdminOperations />}
+      {section.id === 'statistics' && <AdminCatalogStatistics />}
       {section.id === 'streamers' && <AdminStreamerCodes />}
       {['streamers', 'auction', 'partners'].includes(section.id) && <section className="admin-panel"><h2>{section.name} members</h2><p>Registered accounts with access to this program. Select a member to manage their access.</p>{!records ? <p>{error || 'Loading members…'}</p> : <div className="admin-table-scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Action</th></tr></thead><tbody>{(records.users as AdminUser[]).filter(member => section.id === 'streamers' ? member.is_streamer : section.id === 'auction' ? member.is_auction : member.is_affiliate).map(member => <tr key={member.id}><td>{member.name}</td><td>{member.email}</td><td><button className="admin-text-link" onClick={() => setEditingUser(member)}>Manage access</button></td></tr>)}</tbody></table><p className="text-xs text-gray-400 mt-4">Showing matching members among the latest {records.users.length} accounts. <Link to="/admin/users" className="admin-text-link">Manage users</Link></p></div>}</section>}
       {section.id === 'deposits' && <section className="admin-panel"><h2>Deposit history</h2><p>Payments without an associated order. Payment collection is not connected yet.</p>{records ? <DatabaseRecords rows={records.payments.filter(payment => payment.order_id == null)} /> : <p>{error || 'Loading deposits…'}</p>}</section>}

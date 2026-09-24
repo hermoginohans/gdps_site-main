@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Wallet, Filter, ArrowUpRight } from 'lucide-react';
 import { apiRequest } from '../../context/AuthContext';
 import { Link } from '../../context/RouterContext';
+import { useCatalog } from '../../context/CatalogContext';
 import './AdminOperations.css';
 type Report = { period: { orders: number; turnoverCentavos: number | null }; today: { orders: number; turnoverCentavos: number | null }; pending: number; users: number; newUsers: number; products: number };
 const providers = ['LapalGaming', 'VexGame', 'OneOne', 'Razer Gold', 'Aigan', 'Nexone', 'IDSL', 'BambooCard', 'Ushopcenter'];
 const money = (value: number | null) => value === null ? 'Unavailable' : new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value / 100);
 export function AdminOperations() {
+  const catalog = useCatalog();
   const today = new Date();
   const [month, setMonth] = useState(today.getMonth() + 1);
   const [year, setYear] = useState(today.getFullYear());
@@ -22,7 +24,7 @@ export function AdminOperations() {
     { label: 'Gateway fees', value: '—', detail: 'Order and deposit fees unavailable' },
     { label: 'VAT on fees', value: '—', detail: 'Tax configuration required' },
     { label: 'Total users', value: report?.users, detail: report ? `${report.newUsers} new in selected month` : 'Loading…' },
-    { label: 'Total products', value: report?.products, detail: 'Current catalog total' },
+    { label: 'Total products', value: catalog.loading ? '…' : catalog.error ? 'Unavailable' : catalog.products.length, detail: catalog.error ? 'Catalog could not be loaded' : 'Current storefront listings, including suppliers' },
   ];
   return <div className="admin-operations">
     <form className="admin-period-filter admin-panel" onSubmit={e => { e.preventDefault(); setPeriod({ month, year }); }}>

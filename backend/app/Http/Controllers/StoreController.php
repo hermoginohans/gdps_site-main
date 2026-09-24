@@ -20,7 +20,7 @@ class StoreController extends Controller
     {
         if ($url = config('services.supplier.products_url')) {
             try {
-                $products = Cache::remember('supplier.products.v2.'.hash('sha256', $url), 60, function () use ($url): array {
+                $products = Cache::store('file')->remember('supplier.products.v2.'.hash('sha256', $url), 60, function () use ($url): array {
                     $data = Http::acceptJson()->connectTimeout(5)->timeout(15)->get($url)->throw()->json();
                     if (! is_array($data) || ($data['code'] ?? null) !== 200 || ! is_array($data['payload'] ?? null)) {
                         throw new \UnexpectedValueException('Invalid supplier catalog response.');

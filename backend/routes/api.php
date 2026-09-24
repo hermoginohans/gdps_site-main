@@ -7,15 +7,9 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StreamerCodeController;
 use App\Http\Middleware\EnsureAccountEnabled;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 
-Route::middleware([
-    EncryptCookies::class,
-    AddQueuedCookiesToResponse::class,
-    StartSession::class,
-])->group(function (): void {
+Route::middleware('web')->withoutMiddleware(PreventRequestForgery::class)->group(function (): void {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);

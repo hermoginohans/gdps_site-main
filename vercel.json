@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://gdpssite-main-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/sanctum/:path*",
+      "destination": "https://gdpssite-main-production.up.railway.app/sanctum/:path*"
+    },
+    {
       "source": "/((?!assets/).*)",
       "destination": "/index.html"
     }

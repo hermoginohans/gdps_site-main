@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminIpBanController;
 use App\Http\Controllers\AdminPaymentMethodController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CouponController;
@@ -29,6 +30,7 @@ Route::middleware(['auth:sanctum', EnsureAccountEnabled::class])->group(function
     Route::post('/admin/streamer-codes', [StreamerCodeController::class, 'save']);
     Route::put('/admin/streamer-codes/{id}', [StreamerCodeController::class, 'save'])->whereNumber('id');
     Route::get('/account', [StoreController::class, 'account']);
+    Route::put('/admin/ip-bans', [AdminIpBanController::class, 'save']);
     Route::get('/admin', [StoreController::class, 'admin']);
     Route::get('/admin/payment-methods', [AdminPaymentMethodController::class, 'index']);
     Route::post('/admin/payment-methods', [AdminPaymentMethodController::class, 'store']);

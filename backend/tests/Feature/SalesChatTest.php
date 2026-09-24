@@ -2,12 +2,15 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class SalesChatTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_chat_handles_missing_key_and_rejects_instruction_roles(): void
     {
         config(['services.openai.key' => null]);

@@ -315,9 +315,11 @@ class StoreController extends Controller
         abort_unless($request->user()->is_admin, 403);
 
         $schema = DB::connection()->getSchemaBuilder();
-        $columns = array_intersect(['id', 'name', 'email', 'is_admin', 'is_affiliate', 'is_streamer', 'is_auction', 'is_disabled', 'banned_at', 'created_at'], $schema->getColumnListing('users'));
+        $columns = array_intersect(['id', 'name', 'email', 'is_admin', 'is_affiliate', 'is_streamer', 'is_auction', 'is_disabled', 'banned_at', 'last_login_ip', 'last_login_at', 'created_at'], $schema->getColumnListing('users'));
         $users = User::select($columns)->latest()->limit(100)->get()->map(fn ($user): array => [
             'id' => $user->id, 'name' => $user->name, 'email' => $user->email,
+            'last_login_ip' => $user->last_login_ip, 'last_login_at' => $user->last_login_at,
+            'ip_banned' => $user->last_login_ip ? DB::table('ip_bans')->where('ip', $user->last_login_ip)->exists() : false,
             'is_admin' => $user->is_admin, 'is_affiliate' => (bool) $user->is_affiliate,
             'is_streamer' => (bool) $user->is_streamer, 'is_auction' => (bool) $user->is_auction,
             'is_disabled' => (bool) $user->is_disabled || $user->banned_at !== null,
@@ -328,6 +330,7 @@ class StoreController extends Controller
 
         return response()->json([
             'users' => $users,
+            'ipBans' => DB::table('ip_bans')->orderByDesc('created_at')->get(['ip', 'created_at']),
             'roles' => $schema->hasTable('roles') ? DB::table('roles')->where('guard_name', 'web')->get(['id', 'name']) : [],
             'userProgramFlagsSupported' => $schema->hasColumns('users', ['is_affiliate', 'is_streamer', 'is_auction']),
             'news' => $schema->hasTable('news') ? DB::table('news')->latest('published_at')->limit(100)->get()->map(fn ($row) => $this->newsPayload($row)) : [],

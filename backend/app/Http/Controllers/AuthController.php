@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\ClientIp;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as PasswordBroker;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Socialite\Facades\Socialite;
@@ -46,16 +47,24 @@ class AuthController extends Controller
 
         $userColumns = Schema::getColumnListing('users');
         $userData = [
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
-        if (in_array('account_status', $userColumns, true)) $userData['account_status'] = 'active';
-        if (in_array('first_login', $userColumns, true)) $userData['first_login'] = false;
-        if (in_array('is_admin', $userColumns, true)) $userData['is_admin'] = false;
-        if (in_array('loyalty_points', $userColumns, true)) $userData['loyalty_points'] = 0;
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        if (in_array('account_status', $userColumns, true)) {
+            $userData['account_status'] = 'active';
+        }
+        if (in_array('first_login', $userColumns, true)) {
+            $userData['first_login'] = false;
+        }
+        if (in_array('is_admin', $userColumns, true)) {
+            $userData['is_admin'] = false;
+        }
+        if (in_array('loyalty_points', $userColumns, true)) {
+            $userData['loyalty_points'] = 0;
+        }
         $userId = DB::table('users')->insertGetId($userData);
         $user = User::findOrFail($userId);
 
@@ -77,6 +86,8 @@ class AuthController extends Controller
         if ($user->is_disabled) {
             return response()->json(['message' => 'This account has been disabled. Contact support for help.'], 403);
         }
+
+        DB::table('users')->where('id', $user->id)->update(['last_login_ip' => ClientIp::get($request), 'last_login_at' => now()]);
 
         return response()->json(['user' => $this->profile($user), 'token' => $user->createToken('web')->plainTextToken]);
     }
@@ -155,6 +166,8 @@ class AuthController extends Controller
                 ])->save();
             }
 
+            abort_if($user->is_disabled, 403);
+            DB::table('users')->where('id', $user->id)->update(['last_login_ip' => ClientIp::get($request), 'last_login_at' => now()]);
             Auth::login($user);
             $request->session()->regenerate();
 

@@ -11,3 +11,35 @@
 .reference-game-shortcuts button:has(.reference-cropped-art) { height: auto; aspect-ratio: 366 / 110; padding: 0; border: 0; background: transparent; border-radius: 16px; }
 .reference-game-shortcuts .reference-cropped-art { display: block; width: 100%; height: 100%; }
 .reference-game-shortcuts button > .sr-only { position: absolute; padding: 0; border: 0; }
+
+.reference-game-shortcuts button {
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+.reference-game-shortcuts button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 25%, #ffe5a02e 50%, transparent 75%);
+  transform: translateX(-150%);
+}
+.reference-game-shortcuts button:focus-visible {
+  box-shadow: 0 0 0 1px #f4cc6980, 0 10px 28px #efb94b26;
+}
+@media (hover: hover) and (pointer: fine) {
+  .reference-game-shortcuts button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 0 1px #f4cc6980, 0 12px 30px #efb94b26;
+  }
+  .reference-game-shortcuts button:hover::after {
+    transform: translateX(150%);
+    transition: transform 650ms ease;
+  }
+}
+.reference-game-shortcuts button:active { transform: scale(.985); }
+@media (prefers-reduced-motion: reduce) {
+  .reference-game-shortcuts button,
+  .reference-game-shortcuts button:hover,
+  .reference-game-shortcuts button:active { transform: none; transition: none; }
+  .reference-game-shortcuts button::after { display: none; }
+}

@@ -8,11 +8,11 @@ use App\Http\Controllers\StreamerCodeController;
 use App\Http\Middleware\EnsureAccountEnabled;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('throttle:register')->post('/register', [AuthController::class, 'register']);
-Route::middleware('throttle:10,1')->post('/forgot-password', [AuthController::class, 'forgotPassword']);
-Route::middleware('throttle:10,1')->post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::get('/register/availability', [AuthController::class, 'availability'])->middleware('throttle:60,1');
-Route::middleware('throttle:login')->post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum', EnsureAccountEnabled::class])->group(function (): void {
     Route::get('/admin/streamer-codes', [StreamerCodeController::class, 'index']);

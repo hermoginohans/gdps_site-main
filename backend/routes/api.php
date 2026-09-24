@@ -7,9 +7,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StreamerCodeController;
 use App\Http\Middleware\EnsureAccountEnabled;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
-
-Route::middleware('web')->withoutMiddleware(PreventRequestForgery::class)->group(function (): void {
+Route::group(function (): void {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);

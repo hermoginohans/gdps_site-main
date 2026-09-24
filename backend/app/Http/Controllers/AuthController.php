@@ -43,8 +43,6 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($validated);
-        Auth::login($user);
-        $request->session()->regenerate();
 
         return response()->json(['user' => $this->profile($user)], 201);
     }
@@ -56,19 +54,16 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials)) {
+        $user = User::where('email', $credentials['email'])->first();
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             return response()->json(['message' => 'The provided credentials are incorrect.'], 422);
         }
 
-        if ($request->user()->is_disabled) {
-            Auth::guard('web')->logout();
-
+        if ($user->is_disabled) {
             return response()->json(['message' => 'This account has been disabled. Contact support for help.'], 403);
         }
 
-        $request->session()->regenerate();
-
-        return response()->json(['user' => $this->profile($request->user())]);
+        return response()->json(['user' => $this->profile($user)]);
     }
 
     public function forgotPassword(Request $request): JsonResponse

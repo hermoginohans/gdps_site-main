@@ -88,7 +88,7 @@ export function AdminPage() {
     const matchesFilter = userFilter === 'all' || (userFilter === 'affiliate' && affiliate) || (userFilter === 'streamer' && streamer) || (userFilter === 'auction' && auction) || (userFilter === 'none' && !affiliate && !streamer && !auction) || (userFilter === 'active' && !disabled) || (userFilter === 'disabled' && disabled);
     return matchesSearch && matchesFilter;
   }) || [];
-  const handleLogout = async () => { await logout(); window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); };
+  const handleLogout = async () => { if (!await logout()) return; window.history.pushState({}, '', '/'); window.dispatchEvent(new PopStateEvent('popstate')); };
   if (!user) return <AdminLoginForm />;
   if (!user.isAdmin) return <main className="max-w-lg mx-auto p-10 space-y-5"><h1 className="text-2xl text-brand-gold font-bold">Administrator access required</h1><p>Your account does not have administrator access.</p><Link to="/" className="admin-text-link">Back to storefront</Link></main>;
   return <div className="admin-shell">

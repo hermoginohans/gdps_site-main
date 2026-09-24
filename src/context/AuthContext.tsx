@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { SignOutModal } from '../components/common/SignOutModal';
 import { UserProfile, UserSavedAccount } from '../types';
 
 interface AuthContextType {
@@ -8,7 +9,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<void>;
   loginWithGoogle: () => void;
-  logout: () => Promise<void>;
+  logout: () => Promise<boolean>;
   addSavedAccount: (account: Omit<UserSavedAccount, 'id'>) => void;
   removeSavedAccount: (id: string) => void;
   addLoyaltyPoints: (points: number) => void;
@@ -96,13 +97,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = `${API_URL}/auth/google/redirect`;
   };
 
-  const logout = async () => {
-    try {
-      await apiRequest('/api/logout', { method: 'POST' });
-    } finally {
-      window.localStorage.removeItem('gpds_auth_token');
-      setUser(null);
-    }
+  const [confirmSignOut, setConfirmSignOut] = useState(false);
+  const signOutResult = useRef<((confirmed: boolean) => void) | null>(null);
+  const logout = (): Promise<boolean> => {
+    if (signOutResult.current) return Promise.resolve(false);
+    setConfirmSignOut(true);
+    return new Promise(resolve => { signOutResult.current = resolve; });
+  };
+  const finishSignOut = (confirmed: boolean) => {
+    setConfirmSignOut(false);
+    signOutResult.current?.(confirmed);
+    signOutResult.current = null;
   };
 
   const addSavedAccount = (account: Omit<UserSavedAccount, 'id'>) => {
@@ -149,6 +154,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }}
     >
       {children}
+      {confirmSignOut && <SignOutModal onCancel={() => finishSignOut(false)} onConfirm={async () => {
+        await apiRequest('/api/logout', { method: 'POST' });
+        window.localStorage.removeItem('gpds_auth_token');
+        setUser(null);
+        finishSignOut(true);
+      }} />}
     </AuthContext.Provider>
   );
 };

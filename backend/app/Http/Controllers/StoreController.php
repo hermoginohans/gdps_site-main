@@ -134,6 +134,13 @@ class StoreController extends Controller
         } catch (\Throwable $exception) {
             report($exception);
 
+            if (isset($product) && is_array($product)) {
+                $product['packages'] = [];
+                $product['inputFields'] = [];
+
+                return response()->json(['product' => $product, 'packagesUnavailable' => true]);
+            }
+
             return response()->json(['message' => 'Game details are temporarily unavailable. Please try again.'], 503);
         }
     }

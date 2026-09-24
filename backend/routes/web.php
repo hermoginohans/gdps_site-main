@@ -4,7 +4,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'service' => 'GPDS Game Shop API',
+        'status' => 'online',
+    ]);
 });
 
 Route::get('/reset-password/{token}', function (Request $request, string $token) {

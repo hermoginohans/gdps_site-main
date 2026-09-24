@@ -90,7 +90,7 @@ class StoreController extends Controller
                 return response()->json(['message' => 'Product not found.'], 404);
             }
 
-            $result = Cache::store('file')->remember('supplier.detail.v2.'.hash('sha256', $url.$slug), 60, function () use ($url, $slug, $product): array {
+            $result = (function () use ($url, $slug, $product): array {
                 $detail = Http::acceptJson()->connectTimeout(5)->timeout(15)
                     ->get(rtrim($url, '/').'/'.rawurlencode($slug))->throw()->json();
                 $items = Http::acceptJson()->connectTimeout(5)->timeout(15)
@@ -130,7 +130,7 @@ class StoreController extends Controller
                 $product['maxPrice'] = $prices ? max($prices) : null;
 
                 return $product;
-            });
+            })();
 
             return response()->json(['product' => $result]);
         } catch (\Throwable $exception) {

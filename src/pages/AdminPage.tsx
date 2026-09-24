@@ -16,6 +16,7 @@ import { AdminProductForm } from '../components/common/AdminProductForm';
 import { assetUrl } from '../utils/assets';
 import './AdminPage.css';
 import './AdminGlass.css';
+import './AdminReference.css';
 import { Gift, Award, Store, Megaphone, Gavel, Wallet, FileBarChart, Headphones, Video, Handshake, RefreshCw, Settings, Server } from 'lucide-react';
 
 const sections = [
@@ -58,6 +59,8 @@ export function AdminPage() {
   const requested = currentPath.split('?')[0].split('/')[2] || 'overview';
   const section = sections.find(item => item.id === (requested === 'content' ? 'news' : requested)) || sections[0];
   const [query, setQuery] = useState('');
+  const [navigationSearch, setNavigationSearch] = useState('');
+  const [memberSearch, setMemberSearch] = useState('');
   const [category, setCategory] = useState('All');
   const [page, setPage] = useState(1);
   const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
@@ -90,13 +93,14 @@ export function AdminPage() {
   return <div className="admin-shell">
     <aside className="admin-sidebar">
       <Link to="/admin" className="admin-brand"><img src={assetUrl('/gpds_logo.png')} alt="GPDS Game Shop" /><span>ADMIN WORKSPACE</span></Link>
-      <p className="admin-nav-label">Store management</p>
-      <nav aria-label="Admin navigation">{sections.map(item => <Link key={item.id} to={`/admin/${item.id}`} className={`admin-nav-item${section.id === item.id ? ' active' : ''}`}><item.icon size={18} /><span>{item.name}</span></Link>)}</nav>
+      
+      <nav aria-label="Admin navigation">{sections.map(item => <div key={item.id}>{['overview', 'products', 'support', 'settings'].includes(item.id) && <p className="admin-nav-label">{item.id === 'overview' ? 'Admin workspace' : item.id === 'products' ? 'Store management' : item.id === 'support' ? 'Community' : 'System'}</p>}<Link to={`/admin/${item.id}`} className={`admin-nav-item${section.id === item.id ? ' active' : ''}`}><item.icon size={20} /><span>{item.name}</span></Link></div>)}</nav>
       <div className="admin-sidebar-bottom"><ShieldCheck size={20} /><p>Administrator<span>Database connected</span></p></div>
       <Link to="/" className="admin-store-link">Back to storefront <ArrowUpRight size={16} /></Link>
       <button type="button" className="admin-logout-button" onClick={handleLogout}><LogOut size={16} />Log out</button>
     </aside>
     <main className="admin-main">
+      <div className="admin-topbar"><div className="admin-navigation-search"><label><Search size={20} /><input aria-label="Search admin pages" placeholder="Search admin pages…" value={navigationSearch} onChange={event => setNavigationSearch(event.target.value)} /></label>{navigationSearch.trim() && <div className="admin-navigation-results">{sections.filter(item => item.name.toLowerCase().includes(navigationSearch.trim().toLowerCase())).map(item => <Link key={item.id} to={'/admin/' + item.id} onClick={() => setNavigationSearch('')}>{item.name}</Link>)}{!sections.some(item => item.name.toLowerCase().includes(navigationSearch.trim().toLowerCase())) && <p>No matching pages</p>}</div>}</div><span className="admin-topbar-account"><ShieldCheck size={18} />{user.name}</span></div>
       <header className="admin-header"><div><p>GPDS WORKSPACE</p><h1>{section.name}</h1></div><div className="admin-glass-toolbar"><Link to="/admin/products" className="admin-glass-create"><Plus size={15} />Manage products</Link><div className="admin-profile-menu"><button type="button" className="admin-glass-profile" aria-expanded={isProfileMenuOpen} aria-haspopup="menu" onClick={() => setIsProfileMenuOpen(open => !open)}><span>{user.name.slice(0, 1).toUpperCase()}</span><div><strong>{user.name}</strong><small>Administrator</small></div></button>{isProfileMenuOpen && <div className="admin-profile-dropdown" role="menu"><div className="admin-profile-summary"><strong>{user.name}</strong><small>{user.email}</small></div><button type="button" role="menuitem" onClick={handleLogout}><LogOut size={15} />Log out</button></div>}</div></div></header>
       <div className="admin-preview-notice">Products are saved to the database. Payment processing is not connected; no money can be collected here.</div>{(error || catalogError) && <p role="alert">{error || catalogError}</p>}{loading && <p>Loading catalog…</p>}
       {section.id === 'overview' && <>
@@ -125,7 +129,11 @@ export function AdminPage() {
       {['providers', 'reports'].includes(section.id) && <AdminOperations />}
       {section.id === 'statistics' && <AdminCatalogStatistics />}
       {section.id === 'streamers' && <AdminStreamerCodes />}
-      {['streamers', 'auction', 'partners'].includes(section.id) && <section className="admin-panel"><h2>{section.name} members</h2><p>Registered accounts with access to this program. Select a member to manage their access.</p>{!records ? <p>{error || 'Loading members…'}</p> : <div className="admin-table-scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Action</th></tr></thead><tbody>{(records.users as AdminUser[]).filter(member => section.id === 'streamers' ? member.is_streamer : section.id === 'auction' ? member.is_auction : member.is_affiliate).map(member => <tr key={member.id}><td>{member.name}</td><td>{member.email}</td><td><button className="admin-text-link" onClick={() => setEditingUser(member)}>Manage access</button></td></tr>)}</tbody></table><p className="text-xs text-gray-400 mt-4">Showing matching members among the latest {records.users.length} accounts. <Link to="/admin/users" className="admin-text-link">Manage users</Link></p></div>}</section>}
+      {['streamers', 'auction', 'partners'].includes(section.id) && <section className="admin-panel"><div className="admin-panel-heading"><div><h2>{section.name} members</h2><p>Registered accounts with access to this program. Select a member to manage their access.</p></div><label className="admin-member-search"><Search size={18} /><input aria-label="Search members" placeholder="Search members" value={memberSearch} onChange={event => setMemberSearch(event.target.value)} /></label></div>{!records ? <p>{error || 'Loading members...'}</p> : (() => {
+        const members = (records.users as AdminUser[]).filter(member => isEnabledFlag(section.id === 'streamers' ? member.is_streamer : section.id === 'auction' ? member.is_auction : member.is_affiliate));
+        const matching = members.filter(member => (member.name + ' ' + member.email).toLowerCase().includes(memberSearch.trim().toLowerCase()));
+        return <><div className="admin-table-scroll"><table><thead><tr><th>Name</th><th>Email</th><th>Action</th></tr></thead><tbody>{matching.map(member => <tr key={member.id}><td>{member.name}</td><td>{member.email}</td><td><button className="admin-text-link" onClick={() => setEditingUser(member)}>Manage access</button></td></tr>)}</tbody></table></div>{!matching.length && <div className="admin-members-empty"><span><Users size={32} /></span><h3>No members found</h3><p>{memberSearch ? 'Try another name or email.' : 'No members in the loaded accounts have access to this program yet.'}</p><Link to="/admin/users" className="admin-glass-create"><Users size={18} />Manage users</Link></div>}<footer className="admin-members-footer">Showing {matching.length} of {members.length} members in the latest {records.users.length} accounts</footer></>;
+      })()}</section>}
       {section.id === 'deposits' && <section className="admin-panel"><h2>Deposit history</h2><p>Payments without an associated order. Payment collection is not connected yet.</p>{records ? <DatabaseRecords rows={records.payments.filter(payment => payment.order_id == null)} /> : <p>{error || 'Loading deposits…'}</p>}</section>}
       {section.id === 'resellers' && <section className="admin-panel"><div className="admin-panel-heading"><div><h2>Resellers</h2><p>Manage reseller accounts and access from the user directory.</p></div><Link to="/admin/users" className="admin-text-link"><Plus size={15} /> Add reseller</Link></div><div className="admin-reseller-empty"><Store size={28} /><h3>Reseller management</h3><p>Choose an existing user to manage their reseller access and account details.</p><Link to="/admin/users" className="admin-glass-create">Open users</Link></div></section>}
       {section.id === 'promo' && <AdminCoupons />}

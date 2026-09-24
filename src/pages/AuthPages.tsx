@@ -116,10 +116,10 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
   };
 
   return (
-    <div className={mode === 'register' ? 'registration-page' : 'max-w-md mx-auto px-4 py-12 space-y-8'}>
+    <div className={mode === 'register' ? 'registration-page' : 'login-page'}>
       
       {/* Brand Header */}
-      {mode === 'register' ? <header className="registration-hero"><svg viewBox="54 37 930 482" aria-hidden="true"><image href={assetUrl('/register-reference.png')} width="1037" height="1517" /></svg><h1 className="sr-only">Join the GPDS Community</h1><p className="sr-only">Create your account and explore your favorite games.</p></header> : <div className="text-center space-y-3">
+      {mode === 'register' ? <header className="registration-hero"><svg viewBox="54 37 930 482" aria-hidden="true"><image href={assetUrl('/register-reference.png')} width="1037" height="1517" /></svg><h1 className="sr-only">Join the GPDS Community</h1><p className="sr-only">Create your account and explore your favorite games.</p></header> : <div className="login-brand text-center space-y-3">
         <Link to="/" className="inline-block group" aria-label="GPDS GAME SHOP Home">
           <img 
             src={assetUrl("/gpds_logo.png")} 
@@ -128,17 +128,18 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           />
         </Link>
         <h1 className="text-2xl sm:text-3xl font-display font-black text-white">
-          {mode === 'login' ? 'Welcome Back, Gamer' : 'Create your free account'}
+          Welcome Back, Gamer
         </h1>
         <p className="text-xs text-gray-400">
-          Sign in to manage your account and view your orders.
+          PLAY MORE. PAY LESS.
         </p>
       </div>}
 
+      {mode === 'login' && <aside className="login-art" aria-label="Welcome back, gamer. Sign in to manage your account and view your orders."><svg viewBox="33 221 479 956" aria-hidden="true" preserveAspectRatio="xMidYMid slice"><image href={assetUrl('/login-reference.png')} width="1071" height="1469" /></svg></aside>}
       {/* Auth Card */}
       <div className={`auth-card p-6 sm:p-8 rounded-3xl bg-brand-card border border-brand-cardBorder shadow-2xl space-y-6`}>
         
-        <div className="auth-form-intro flex items-center gap-3 border-b border-brand-cardBorder pb-5"><span className="rounded-2xl bg-brand-gold/15 p-3 text-brand-gold"><User size={24} /></span><div><h2 className="text-lg font-bold text-white">{mode === 'register' ? 'Join GPDS Game Shop' : 'Sign in to your account'}</h2><p className="mt-1 text-xs text-gray-400">{mode === 'register' ? 'Your gamer profile starts here.' : 'Enter your account details below.'}</p></div></div>
+        <div className="auth-form-intro flex items-center gap-3 border-b border-brand-cardBorder pb-5"><span className="rounded-2xl bg-brand-gold/15 p-3 text-brand-gold"><User size={24} /></span><div><h2 className="text-lg font-bold text-white">{mode === 'register' ? 'Join GPDS Game Shop' : 'Sign in to your account'}</h2><p className="mt-1 text-xs text-gray-400">{mode === 'register' ? 'Your gamer profile starts here.' : 'Enter your details to continue to GPDS Game Shop.'}</p></div></div>
 
         <button
           type="button"
@@ -146,7 +147,7 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           className="w-full py-3 px-4 rounded-xl bg-white text-gray-900 font-bold text-xs flex items-center justify-center gap-3 hover:bg-gray-100 transition-all"
         >
           <span className="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center font-black text-sm">G</span>
-          {mode === 'register' ? 'Continue with Google' : 'Sign in with Google'}
+          Continue with Google
         </button>
 
         <div className="relative flex items-center justify-center">
@@ -275,7 +276,7 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
             disabled={isSubmitting}
             className="w-full py-3.5 bg-gradient-to-r from-brand-gold via-brand-goldLight to-brand-gold text-brand-dark font-display font-black text-xs uppercase tracking-wider rounded-xl shadow-gold-glow hover:opacity-95 transition-all mt-2"
           >
-            {isSubmitting ? (mode === 'register' ? 'Creating your account...' : 'Signing in...') : mode === 'login' ? 'Sign In to Dashboard' : 'Create My Account ?'}
+            {isSubmitting ? (mode === 'register' ? 'Creating your account...' : 'Signing in...') : <>{mode === 'login' ? 'SIGN IN' : 'Create My Account'} <ArrowRight className="inline-block ml-3" size={22} aria-hidden="true" /></>}
           </button>
         </form>
 

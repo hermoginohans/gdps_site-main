@@ -7,7 +7,7 @@ COPY src ./src
 COPY public ./public
 RUN npm run build
 
-FROM php:8.4-apache
+FROM php:8.4-apache-bookworm
 WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y git unzip libzip-dev libonig-dev libicu-dev \
     && docker-php-ext-install pdo_mysql mbstring zip intl \
@@ -23,6 +23,7 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 COPY --from=frontend /app/dist/ ./public/
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf \
     && printf '<Directory /var/www/html/public>\nAllowOverride All\nRequire all granted\nDirectoryIndex index.php\n</Directory>\n' > /etc/apache2/conf-available/gpds.conf \
-    && a2enconf gpds
+    && a2enconf gpds \
+    && apache2ctl configtest
 ENV APP_ENV=production APP_DEBUG=false CACHE_STORE=file SESSION_DRIVER=cookie
 CMD ["sh", "-c", "sed -i \"s/Listen 80/Listen ${PORT:-8080}/\" /etc/apache2/ports.conf && sed -i \"s/:80>/:${PORT:-8080}>/\" /etc/apache2/sites-available/000-default.conf && exec apache2-foreground"]

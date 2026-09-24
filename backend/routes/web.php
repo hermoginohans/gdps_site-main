@@ -1,12 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 
 Route::get('/', function () {
+    if (is_file(public_path('index.html'))) {
+        return response()->file(public_path('index.html'), ['Cache-Control' => 'no-cache']);
+    }
+
     return response()->json([
         'service' => 'GPDS Game Shop API',
         'status' => 'online',
@@ -20,6 +25,13 @@ Route::get('/reset-password/{token}', function (Request $request, string $token)
 })->name('password.reset');
 
 Route::middleware('throttle:google-oauth')->group(function (): void {
-    Route::get('/auth/google/redirect', [\App\Http\Controllers\AuthController::class, 'googleRedirect']);
-    Route::get('/auth/google/callback', [\App\Http\Controllers\AuthController::class, 'googleCallback']);
+    Route::get('/auth/google/redirect', [AuthController::class, 'googleRedirect']);
+    Route::get('/auth/google/callback', [AuthController::class, 'googleCallback']);
 });
+
+Route::get('/{path}', function () {
+    abort_unless(is_file(public_path('index.html')), 404);
+
+    return response()->file(public_path('index.html'), ['Cache-Control' => 'no-cache']);
+})->where('path', '(?!(?:api|sanctum|auth|up|assets)(?:/|$))[^.]*')
+    ->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, PreventRequestForgery::class]);

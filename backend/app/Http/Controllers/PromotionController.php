@@ -30,6 +30,7 @@ class PromotionController extends Controller
         abort_unless($request->user()->is_admin, 403);
         $data = $request->validate([
             'enabled' => ['required', 'boolean'],
+            'image_only' => ['sometimes', 'boolean'],
             'title' => ['required', 'string', 'max:120'],
             'message' => ['nullable', 'string', 'max:1000'],
             'image_url' => ['nullable', 'url:https', 'max:2000'],

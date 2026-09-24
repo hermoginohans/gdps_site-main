@@ -15,14 +15,14 @@ export function AdminPromotion() {
     apiRequest('/api/admin/promotion').then(data => setForm({ ...blank, ...data.promotion })).catch(e => setError(e.message)).finally(() => setLoading(false));
   };
   useEffect(load, []);
-  return <section className="admin-panel"><h2>Promotional popup</h2><p>Appears on the homepage. Once dismissed, it stays hidden for that browser tab until you save a new version.</p>
+  return <section className="admin-panel"><h2>Promotional popup</h2><button type="button" className="admin-glass-create" onClick={() => setForm({ ...form, title: "Get your free code", image_url: window.location.origin + "/promotion-free-code.png", image_only: true })}>Use free-code artwork</button><p>Appears on the homepage. Once dismissed, it stays hidden for that browser tab until you save a new version.</p>
     {loading ? <p>Loading settings…</p> : <form className="space-y-4 mt-5" onSubmit={async event => {
       event.preventDefault(); setSaving(true); setMessage(''); setError('');
       try { const data = await apiRequest('/api/admin/promotion', { method: 'PUT', body: JSON.stringify(form) }); setForm({ ...blank, ...data.promotion }); setMessage(data.message); }
       catch (e) { setError(e instanceof Error ? e.message : 'Unable to save.'); }
       finally { setSaving(false); }
     }}>
-      <label className="flex gap-3"><input type="checkbox" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />Enable promotional popup</label>
+      <label className="flex gap-3"><input type="checkbox" checked={!!form.image_only} onChange={e => setForm({ ...form, image_only: e.target.checked })} />Artwork only (hide extra text)</label><label className="flex gap-3"><input type="checkbox" checked={form.enabled} onChange={e => setForm({ ...form, enabled: e.target.checked })} />Enable promotional popup</label>
       {(['title', 'message', 'image_url', 'button_label', 'button_url'] as const).map(key => <label key={key} className="block text-sm">{{ title: 'Title', message: 'Message', image_url: 'Image URL (HTTPS, optional)', button_label: 'Button text (optional)', button_url: 'Button destination (full HTTPS URL)' }[key]}
         {key === 'message' ? <textarea className="admin-modal-input w-full mt-2" maxLength={1000} value={form[key] ?? ''} onChange={e => setForm({ ...form, [key]: e.target.value })} /> : <input className="admin-modal-input w-full mt-2" type={key.endsWith('_url') ? 'url' : 'text'} required={key === 'title' || (key === 'button_url' && !!form.button_label) || (key === 'button_label' && !!form.button_url)} maxLength={key === 'title' ? 120 : key === 'button_label' ? 50 : 2000} value={form[key] ?? ''} onChange={e => setForm({ ...form, [key]: e.target.value })} />}
       </label>)}

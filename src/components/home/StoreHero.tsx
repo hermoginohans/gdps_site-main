@@ -59,7 +59,7 @@ export function StoreHero() {
         </div>
         <div className="reference-benefits">{[{ icon: Zap, title: 'Easy top-ups', text: 'Find the right package' }, { icon: Gamepad2, title: 'Your favorite games', text: 'Explore our live catalog' }, { icon: Wallet, title: 'Try demo checkout', text: 'No real payment required' }, { icon: Headphones, title: 'Helpful support', text: 'We are here for you' }].map(item => <div key={item.title}><span><item.icon size={27} /></span><div><strong>{item.title}</strong><p>{item.text}</p></div></div>)}</div>
         <div className="reference-shortcut-heading"><h2>Jump into your game</h2><Link to="/games">Browse all games <ArrowRight size={17} /></Link></div>
-        <div className="reference-game-shortcuts">{shortcuts.map(product => <button type="button" key={product.id} onClick={() => openProduct(product)}><img src={product.picture} alt="" /><strong>{product.name}</strong><span><ArrowRight size={20} /></span></button>)}</div>
+        <div className="reference-game-shortcuts">{shortcuts.map(product => <button type="button" key={product.id} onClick={() => openProduct(product)}><svg viewBox={`${product.slug.includes("mobile-legends") ? 67 : product.slug.includes("valorant") ? 453 : product.slug.includes("honor-of-kings") ? 843 : 1234} 794 366 110`} aria-hidden="true" className="reference-cropped-art"><image href={assetUrl("/game-card-reference.png")} width="1664" height="944" /></svg><span className="sr-only">{product.name}</span></button>)}</div>
       </div>
     </section>
   );

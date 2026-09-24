@@ -90,7 +90,7 @@ class StoreController extends Controller
                 return response()->json(['message' => 'Product not found.'], 404);
             }
 
-            $result = Cache::remember('supplier.detail.v2.'.hash('sha256', $url.$slug), 60, function () use ($url, $slug, $product): array {
+            $result = Cache::store('file')->remember('supplier.detail.v2.'.hash('sha256', $url.$slug), 60, function () use ($url, $slug, $product): array {
                 $detail = Http::acceptJson()->connectTimeout(5)->timeout(15)
                     ->get(rtrim($url, '/').'/'.rawurlencode($slug))->throw()->json();
                 $items = Http::acceptJson()->connectTimeout(5)->timeout(15)

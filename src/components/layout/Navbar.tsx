@@ -249,7 +249,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenSearch }) => {
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-brand-gold to-brand-goldLight text-brand-dark font-extrabold text-xs tracking-wider uppercase hover:opacity-95 shadow-gold-glow transition-all whitespace-nowrap shrink-0"
               >
                 <User className="w-3.5 h-3.5" />
-                <span>Sign In</span>
+                <span>Sign In / Sign Up</span>
               </button>
             )}
 

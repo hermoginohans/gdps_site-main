@@ -57,7 +57,13 @@ class AuthController extends Controller
             if (in_array('first_login', $userColumns, true)) $userData['first_login'] = false;
             if (in_array('is_admin', $userColumns, true)) $userData['is_admin'] = false;
             if (in_array('loyalty_points', $userColumns, true)) $userData['loyalty_points'] = 0;
-            $userId = DB::table('users')->insertGetId($userData);
+            try {
+                $userId = DB::table('users')->insertGetId($userData);
+            } catch (\Throwable $exception) {
+                report($exception);
+
+                return response()->json(['message' => $exception->getMessage()], 500);
+            }
             $user = User::findOrFail($userId);
         } catch (\Throwable $exception) {
             report($exception);

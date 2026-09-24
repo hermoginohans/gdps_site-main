@@ -11,6 +11,7 @@ import { MobileTabBar } from './components/layout/MobileTabBar';
 import { CartDrawer } from './components/common/CartDrawer';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { LoadingScreen } from './components/common/LoadingScreen';
+import { PromotionalPopup } from './components/common/PromotionalPopup';
 import { EsportsGlobalBackground } from './components/layout/EsportsGlobalBackground';
 
 import { HomePage } from './pages/HomePage';
@@ -80,6 +81,7 @@ const AppContent: React.FC = () => {
 
       {/* Top announcement ticker */}
       <AnnouncementBar />
+      {currentPath === '/' && <PromotionalPopup />}
 
       {/* Main navigation header */}
       <Navbar onOpenSearch={() => setIsSearchModalOpen(true)} />

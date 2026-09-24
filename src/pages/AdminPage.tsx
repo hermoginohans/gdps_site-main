@@ -17,6 +17,7 @@ import { assetUrl } from '../utils/assets';
 import './AdminPage.css';
 import './AdminGlass.css';
 import './AdminReference.css';
+import { AdminPromotion } from '../components/common/AdminPromotion';
 import { Gift, Award, Store, Megaphone, Gavel, Wallet, FileBarChart, Headphones, Video, Handshake, RefreshCw, Settings, Server } from 'lucide-react';
 
 const sections = [
@@ -137,7 +138,8 @@ export function AdminPage() {
       {section.id === 'deposits' && <section className="admin-panel"><h2>Deposit history</h2><p>Payments without an associated order. Payment collection is not connected yet.</p>{records ? <DatabaseRecords rows={records.payments.filter(payment => payment.order_id == null)} /> : <p>{error || 'Loading deposits…'}</p>}</section>}
       {section.id === 'resellers' && <section className="admin-panel"><div className="admin-panel-heading"><div><h2>Resellers</h2><p>Manage reseller accounts and access from the user directory.</p></div><Link to="/admin/users" className="admin-text-link"><Plus size={15} /> Add reseller</Link></div><div className="admin-reseller-empty"><Store size={28} /><h3>Reseller management</h3><p>Choose an existing user to manage their reseller access and account details.</p><Link to="/admin/users" className="admin-glass-create">Open users</Link></div></section>}
       {section.id === 'promo' && <AdminCoupons />}
-      {['gift-cards', 'rewards', 'ecommerce', 'mail', 'settings'].includes(section.id) && <section className="admin-panel"><div className="admin-panel-heading"><h2>{section.name}</h2><span className="admin-preview-badge">Not connected</span></div><EmptyState icon={section.icon} title={`${section.name} management`} description="This section is available in your admin navigation. Its management tools and data integration have not been implemented yet." /></section>}
+      {section.id === 'settings' && <AdminPromotion />}
+      {['gift-cards', 'rewards', 'ecommerce', 'mail'].includes(section.id) && <section className="admin-panel"><div className="admin-panel-heading"><h2>{section.name}</h2><span className="admin-preview-badge">Not connected</span></div><EmptyState icon={section.icon} title={`${section.name} management`} description="This section is available in your admin navigation. Its management tools and data integration have not been implemented yet." /></section>}
       {editingNews !== undefined && <AdminNewsEditor news={editingNews} onClose={() => setEditingNews(undefined)} onSaved={async () => { setEditingNews(undefined); setRecords(await apiRequest('/api/admin')); }} />}
     </main>
   </div>;

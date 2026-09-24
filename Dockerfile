@@ -26,4 +26,4 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available
     && a2enconf gpds \
     && apache2ctl configtest
 ENV APP_ENV=production APP_DEBUG=false CACHE_STORE=file SESSION_DRIVER=cookie
-CMD ["sh", "-c", "sed -i \"s/Listen 80/Listen ${PORT:-8080}/\" /etc/apache2/ports.conf && sed -i \"s/:80>/:${PORT:-8080}>/\" /etc/apache2/sites-available/000-default.conf && exec apache2-foreground"]
+CMD ["sh", "-c", "a2dismod mpm_event mpm_worker && a2enmod mpm_prefork && sed -i \"s/Listen 80/Listen ${PORT:-8080}/\" /etc/apache2/ports.conf && sed -i \"s/:80>/:${PORT:-8080}>/\" /etc/apache2/sites-available/000-default.conf && apache2ctl configtest && exec apache2-foreground"]

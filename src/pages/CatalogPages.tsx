@@ -111,7 +111,7 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
       <button type="button" disabled={quoting} onClick={() => { setCouponApplied(false); setStep('select'); }}>Back to selection</button>
     </div> : <button type="button" className="account-gold-button" onClick={() => { setStep('select'); setSelectedId(null); setAccount({}); setCoupon(''); setCouponApplied(false); setCouponMessage(''); }}>Start another demo</button>}
   </section>;
-  return <form className="space-y-5" onSubmit={event => {
+  return <form className="min-w-0 space-y-5" onSubmit={event => {
     event.preventDefault();
     if (!selected) return;
     const data = new FormData(event.currentTarget);
@@ -119,11 +119,11 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
     setStep('checkout');
   }}>
     <PlayerFields product={product} initialValues={account} />
-    <fieldset className="space-y-3">
+    <fieldset className="min-w-0 space-y-3">
     <legend className="mb-3 text-xl font-bold text-white">Choose a package</legend>
     {!packages.length && <p className="text-gray-400">No packages are currently available.</p>}
     {!!packages.length && <PackageFilters browser={packageBrowser} />}
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
       {packageBrowser.visible.map(item => <label key={item.id} className={`group flex min-h-24 items-center gap-3 rounded-xl border p-3 transition ${item.stock === 0 ? 'cursor-not-allowed border-white/10 opacity-50' : selected?.id === item.id ? 'cursor-pointer border-brand-gold bg-brand-gold/10 shadow-[0_0_24px_rgba(245,166,35,.12)]' : 'cursor-pointer border-white/10 bg-white/[.03] hover:border-brand-gold/70 hover:bg-white/[.06]'} focus-within:ring-2 focus-within:ring-brand-gold`}>
         <input type="radio" name={`package-${product.id}`} value={item.id} checked={selected?.id === item.id} disabled={item.stock === 0} onChange={() => { setSelectedId(item.id); setQuantity(1); }} className="accent-yellow-400" />
         <img src={product.picture} alt="" className="h-12 w-12 rounded-lg object-cover opacity-90" />
@@ -168,9 +168,9 @@ function SupplierProductPage({ product }: { product: OfficialProduct }) {
     <div className="absolute inset-0 bg-cover bg-center opacity-30 blur-sm scale-105" style={{ backgroundImage: `url("${product.picture}")` }} aria-hidden="true" />
     <div className="absolute inset-0 bg-[linear-gradient(115deg,#080b13_8%,rgba(8,11,19,.82)_48%,rgba(8,11,19,.55))]" aria-hidden="true" />
     <section className="relative mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-      <Link to="/games" className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-brand-gold">⌂ <span>Games</span> <span className="text-gray-600">/</span> <span>{product.name}</span></Link>
-      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(320px,.9fr)_minmax(0,1.1fr)] lg:items-start">
-        <div className="space-y-4">
+      <Link to="/games" className="inline-flex max-w-full flex-wrap items-center gap-2 text-sm text-gray-300 hover:text-brand-gold">⌂ <span>Games</span> <span className="text-gray-600">/</span> <span>{product.name}</span></Link>
+      <div className="mt-8 grid grid-cols-1 gap-6 lg:gap-8 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.1fr)] lg:items-start">
+        <div className="min-w-0 space-y-4">
           <div className="overflow-hidden rounded-3xl border border-white/15 bg-black/30 shadow-2xl shadow-black/40">
             <img src={product.picture} alt={product.name} className="aspect-[4/3] w-full object-cover" />
           </div>
@@ -182,10 +182,10 @@ function SupplierProductPage({ product }: { product: OfficialProduct }) {
           <div className="rounded-2xl border border-white/10 bg-black/35 p-4 backdrop-blur-md"><h2 className="font-bold text-white">How it works</h2><div className="mt-3 grid grid-cols-3 gap-3 text-center text-[11px] text-gray-400"><div><strong className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-brand-gold">1</strong>Choose a package</div><div><strong className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-brand-gold">2</strong>Complete payment</div><div><strong className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-brand-gold">3</strong>Receive instantly</div></div></div>
           <div className="flex items-center gap-3 rounded-2xl border border-brand-gold/30 bg-brand-gold/10 px-4 py-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-lg text-brand-dark">Z</span><div><strong className="block text-sm text-brand-gold">Powered by GPDS</strong><span className="text-xs text-gray-400">Trusted digital delivery for gamers.</span></div></div>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-[#101522]/80 p-5 shadow-2xl backdrop-blur-xl sm:p-8">
-          <div className="mb-6 flex justify-end gap-2 text-[10px] font-bold text-gray-300"><span className="rounded-full border border-white/10 bg-white/10 px-3 py-2">⚡ Instant Delivery</span><span className="rounded-full border border-white/10 bg-white/10 px-3 py-2">◇ 100% Secure Payment</span></div>
+        <div className="min-w-0 rounded-3xl border border-white/10 bg-[#101522]/80 p-5 shadow-2xl backdrop-blur-xl sm:p-8">
+          <div className="mb-6 flex flex-wrap justify-end gap-2 text-[10px] font-bold text-gray-300"><span className="rounded-full border border-white/10 bg-white/10 px-3 py-2">⚡ Instant Delivery</span><span className="rounded-full border border-white/10 bg-white/10 px-3 py-2">◇ 100% Secure Payment</span></div>
           <p className="text-xs font-bold uppercase tracking-[.35em] text-brand-gold">{product.category}</p>
-          <h1 className="mt-3 text-3xl font-black leading-tight text-white sm:text-5xl">{product.name}</h1>
+          <h1 className="mt-3 break-words text-3xl font-black leading-tight text-white sm:text-5xl">{product.name}</h1>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-gray-300 line-clamp-2">{product.description}</p>
           <div className="mt-6 rounded-2xl border border-white/10 bg-black/25 px-5 py-4"><span className="block text-xs text-gray-400">Starting from</span><strong className="text-3xl text-brand-gold">{price}</strong></div>
           <div className="mt-7 flex justify-end"><span className="text-xs text-gray-400">API catalog pricing</span></div>

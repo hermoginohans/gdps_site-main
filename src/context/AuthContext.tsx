@@ -14,7 +14,11 @@ interface AuthContextType {
   addLoyaltyPoints: (points: number) => void;
 }
 
-const apiUrl = new URL(import.meta.env.VITE_API_URL || 'http://localhost:8000');
+const configuredApiUrl = import.meta.env.VITE_API_URL || '';
+const isLocalFrontend = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const apiUrl = new URL((!isLocalFrontend && configuredApiUrl.includes('localhost'))
+  ? 'https://gdpssite-main-production.up.railway.app'
+  : configuredApiUrl || (isLocalFrontend ? 'http://localhost:8000' : 'https://gdpssite-main-production.up.railway.app'));
 if (import.meta.env.DEV &&
     ['localhost', '127.0.0.1'].includes(window.location.hostname) &&
     ['localhost', '127.0.0.1'].includes(apiUrl.hostname)) {

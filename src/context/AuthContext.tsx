@@ -73,7 +73,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string) => {
-    await apiRequest('/sanctum/csrf-cookie');
     const data = await apiRequest('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password })
@@ -82,7 +81,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (name: string, email: string, password: string, passwordConfirmation: string) => {
-    await apiRequest('/sanctum/csrf-cookie');
     const data = await apiRequest('/api/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirmation })

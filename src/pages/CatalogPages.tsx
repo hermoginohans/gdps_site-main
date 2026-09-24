@@ -1,3 +1,4 @@
+import { useCurrency } from '../context/CurrencyContext';
 import { useEffect, useRef, useState } from 'react';
 import { Banknote, Building2, CreditCard, QrCode, Smartphone, WalletCards } from 'lucide-react';
 import { apiRequest } from '../context/AuthContext';
@@ -36,7 +37,7 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
   const packages = product.packages ?? [];
   const packageBrowser = usePackageBrowser(packages);
   const selected = packages.find(item => item.id === selectedId && item.stock !== 0);
-  const price = (value: number) => new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
+  const { formatPrice: price } = useCurrency();
   const subtotal = couponApplied && quote ? quote.subtotalCentavos : Math.round((selected?.price ?? 0) * 100) * quantity;
   const discount = couponApplied && quote ? quote.discountCentavos : 0;
   const paymentIcon = (name: string) => {
@@ -167,7 +168,8 @@ function PlayerFields({ product, initialValues = {} }: { product: OfficialProduc
 }
 
 function SupplierProductPage({ product }: { product: OfficialProduct }) {
-  const price = product.minPrice === null ? 'Price unavailable' : `₱${product.minPrice.toLocaleString('en-PH', { maximumFractionDigits: 2 })}`;
+  const { formatPrice } = useCurrency();
+  const price = product.minPrice === null ? 'Price unavailable' : formatPrice(product.minPrice);
   return <main className="relative min-h-screen overflow-hidden bg-[#080b13]">
     <div className="absolute inset-0 bg-cover bg-center opacity-30 blur-sm scale-105" style={{ backgroundImage: `url("${product.picture}")` }} aria-hidden="true" />
     <div className="absolute inset-0 bg-[linear-gradient(115deg,#080b13_8%,rgba(8,11,19,.82)_48%,rgba(8,11,19,.55))]" aria-hidden="true" />
@@ -203,6 +205,7 @@ function SupplierProductPage({ product }: { product: OfficialProduct }) {
 }
 
 export function CatalogPages({ detail = false }: { detail?: boolean }) {
+  const { formatPrice } = useCurrency();
   const { products, loading, error, reload } = useCatalog();
   const { params } = useRouter();
   const [search, setSearch] = useState('');
@@ -260,5 +263,5 @@ export function CatalogPages({ detail = false }: { detail?: boolean }) {
     if (!product) return <div className="p-12 text-center"><h1>Product not found</h1><Link to="/games">Browse games</Link></div>;
     return <SupplierProductPage key={product.slug} product={product} />;
   }
-  return <section className="max-w-7xl mx-auto p-6 py-12"><h1 className="text-3xl font-bold mb-6">Game catalog</h1><input className="dashboard-wallet-input mb-6" aria-label="Search catalog" placeholder="Search games…" value={search} onChange={e => setSearch(e.target.value)} /><div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">{products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => <Link key={p.id} to={`/games/${p.slug}`} className="admin-panel"><img src={p.picture} alt="" loading="lazy" className="rounded-xl aspect-square object-cover mb-3" /><h2 className="text-sm font-bold">{p.name}</h2><p className="text-brand-gold text-sm mt-2">{p.minPrice === null ? 'Price unavailable' : '₱' + p.minPrice.toLocaleString('en-PH')}</p></Link>)}</div></section>;
+  return <section className="max-w-7xl mx-auto p-6 py-12"><h1 className="text-3xl font-bold mb-6">Game catalog</h1><input className="dashboard-wallet-input mb-6" aria-label="Search catalog" placeholder="Search games…" value={search} onChange={e => setSearch(e.target.value)} /><div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">{products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => <Link key={p.id} to={`/games/${p.slug}`} className="admin-panel"><img src={p.picture} alt="" loading="lazy" className="rounded-xl aspect-square object-cover mb-3" /><h2 className="text-sm font-bold">{p.name}</h2><p className="text-brand-gold text-sm mt-2">{p.minPrice === null ? 'Price unavailable' : formatPrice(p.minPrice)}</p></Link>)}</div></section>;
 }

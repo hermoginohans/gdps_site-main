@@ -208,7 +208,21 @@ export function CatalogPages({ detail = false }: { detail?: boolean }) {
     const slug = params.gameId;
     setDetails(null);
     apiRequest(`/api/products/${encodeURIComponent(slug)}`, { signal: controller.signal })
-      .then(data => { if (!controller.signal.aborted) setDetails({ slug, product: data.product }); })
+      .then(async data => {
+        if (controller.signal.aborted || !data.product) return;
+        let product = data.product as OfficialProduct;
+        if (product.source === 'supplier' && !product.packages?.length) {
+          try {
+            const itemsResponse = await fetch(`https://admin.gpdsgameshop.com/api/product-items/${product.id}?currency_code=PHP`, { signal: controller.signal });
+            const itemsData = await itemsResponse.json();
+            const packages = (itemsData.payload ?? []).filter((item: { id?: number; name?: string; total_price?: number }) => item.id && item.name && Number.isFinite(Number(item.total_price))).map((item: { id: number; name: string; total_price: number; stock?: number | null }) => ({ id: String(item.id), name: item.name, price: Number(item.total_price), stock: item.stock ?? null }));
+            if (packages.length) product = { ...product, packages, minPrice: Math.min(...packages.map(item => item.price)), maxPrice: Math.max(...packages.map(item => item.price)) };
+          } catch {
+            // Keep the backend response when the browser fallback is unavailable.
+          }
+        }
+        if (!controller.signal.aborted) setDetails({ slug, product });
+      })
       .catch(() => { if (!controller.signal.aborted) setDetails({ slug, error: 'Unable to load game packages. Please try again.' }); });
     return () => controller.abort();
   }, [supplier, params.gameId, retry]);

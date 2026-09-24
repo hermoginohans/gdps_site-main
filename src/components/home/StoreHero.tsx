@@ -4,6 +4,8 @@ import { Link } from '../../context/RouterContext';
 import { OFFICIAL_SLIDERS } from '../../data/officialData';
 import { assetUrl } from '../../utils/assets';
 import './StoreHero.css';
+import './StoreHeroReference.css';
+import { useCatalog } from '../../context/CatalogContext';
 
 const slides = [
   { name: 'MLBB', url: '/games/mobile-legends', picture: assetUrl('/hero-fantasy.png'), featured: true },
@@ -11,6 +13,8 @@ const slides = [
 ];
 
 export function StoreHero() {
+  const { products, openProduct } = useCatalog();
+  const shortcuts = ['mobile-legends', 'valorant', 'honor-of-kings', 'genshin'].map(term => products.find(product => product.slug.includes(term))).filter((product): product is NonNullable<typeof product> => !!product);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [interacting, setInteracting] = useState(false);
@@ -27,15 +31,15 @@ export function StoreHero() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="store-hero-grid">
           <div className="store-hero-copy">
-            <span className="store-hero-pill"><Zap size={16} fill="currentColor" aria-hidden="true" />Top up. Drop in. Game on.</span>
-            <h1 id="store-hero-title">Your next win<br />starts with<br /><span>a top-up.</span></h1>
-            <p>Diamonds, tokens, and game vouchers for your favorites. Top up easily with GCash, Maya, and QRPH.</p>
+            <span className="store-hero-pill">PLAY MORE. PAY LESS.</span>
+            <h1 id="store-hero-title">Your next win<br /><span>starts here.</span></h1>
+            <p>Top up diamonds, tokens, and game vouchers for your favorites. Find your game and explore the packages.</p>
             <div className="store-hero-actions">
-              <Link to="/games/mobile-legends" className="hero-topup"><Zap size={21} fill="currentColor" aria-hidden="true" />Top up MLBB <ArrowRight size={20} aria-hidden="true" /></Link>
+              <Link to="/games" className="hero-topup"><Zap size={21} fill="currentColor" aria-hidden="true" />Top up now <ArrowRight size={20} aria-hidden="true" /></Link>
               <Link to="/games" className="hero-explore"><Gamepad2 size={22} aria-hidden="true" />Explore games</Link>
             </div>
             <p className="store-hero-games">Mobile Legends · Honor of Kings · And more</p>
-            <div className="store-hero-benefits"><span><Zap aria-hidden="true" />Fast delivery</span><span><Wallet aria-hidden="true" />Local payments</span><span><Headphones aria-hidden="true" />Helpful support</span></div>
+            
           </div>
           <div className="hero-carousel" role="region" aria-roledescription="carousel" aria-label="Featured promotions" onMouseEnter={() => setInteracting(true)} onMouseLeave={() => setInteracting(false)} onFocusCapture={() => setInteracting(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setInteracting(false); }}>
             <div className={`hero-promo${slide.featured ? ' hero-promo-featured' : ''}`} role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${slides.length}: ${slide.name}`}>
@@ -53,7 +57,9 @@ export function StoreHero() {
             </div>
           </div>
         </div>
-        <div className="hero-shortcuts"><span>Jump into your game</span><Link to="/games/mobile-legends"><Gamepad2 />Mobile Legends <ArrowRight size={15} /></Link><Link to="/games/honor-of-kings"><Star />Honor of Kings <ArrowRight size={15} /></Link><Link to="/vouchers"><Ticket />Game vouchers <ArrowRight size={15} /></Link><Link to="/games" className="hero-browse">Browse all games <ArrowUpRight size={16} /></Link></div>
+        <div className="reference-benefits">{[{ icon: Zap, title: 'Easy top-ups', text: 'Find the right package' }, { icon: Gamepad2, title: 'Your favorite games', text: 'Explore our live catalog' }, { icon: Wallet, title: 'Try demo checkout', text: 'No real payment required' }, { icon: Headphones, title: 'Helpful support', text: 'We are here for you' }].map(item => <div key={item.title}><span><item.icon size={27} /></span><div><strong>{item.title}</strong><p>{item.text}</p></div></div>)}</div>
+        <div className="reference-shortcut-heading"><h2>Jump into your game</h2><Link to="/games">Browse all games <ArrowRight size={17} /></Link></div>
+        <div className="reference-game-shortcuts">{shortcuts.map(product => <button type="button" key={product.id} onClick={() => openProduct(product)}><img src={product.picture} alt="" /><strong>{product.name}</strong><span><ArrowRight size={20} /></span></button>)}</div>
       </div>
     </section>
   );

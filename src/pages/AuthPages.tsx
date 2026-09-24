@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { 
   User, 
   Lock, 
@@ -54,7 +54,7 @@ const availabilityMessage = (status: ReturnType<typeof useAvailability>, label: 
 };
 
 export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ initialMode = 'login' }) => {
-  const [mode, setMode] = useState<'login' | 'register'>(initialMode);
+  const mode = initialMode;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
@@ -78,6 +78,9 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
 
   const { login, register, loginWithGoogle } = useAuth();
   const { navigate } = useRouter();
+
+  const previousMode = useRef(mode);
+  useEffect(() => { if (previousMode.current === mode) return; previousMode.current = mode; setPassword(''); setPasswordConfirmation(''); setShowPassword(false); setShowPasswordConfirmation(false); setError(''); setIsForgotModalOpen(false); }, [mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,41 +127,17 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           />
         </Link>
         <h1 className="text-2xl sm:text-3xl font-display font-black text-white">
-          {mode === 'login' ? 'Welcome Back, Gamer' : 'Create GPDS Account'}
+          {mode === 'login' ? 'Welcome Back, Gamer' : 'Create your free account'}
         </h1>
         <p className="text-xs text-gray-400">
-          Save your Game IDs, earn loyalty points, and track instant top-up dispatches.
+          {mode === 'register' ? 'Choose your gamer name and set up your account to start exploring GPDS.' : 'Sign in to manage your account and view your orders.'}
         </p>
       </div>
 
       {/* Auth Card */}
       <div className="p-6 sm:p-8 rounded-3xl bg-brand-card border border-brand-cardBorder shadow-2xl space-y-6">
         
-        {/* Mode Toggle Tabs */}
-        <div className="grid grid-cols-2 p-1 rounded-xl bg-[#0E0A1C] border border-brand-cardBorder text-xs font-bold uppercase tracking-wider">
-          <button
-            type="button"
-            onClick={() => setMode('login')}
-            className={`py-2 rounded-lg transition-all ${
-              mode === 'login'
-                ? 'bg-brand-gold text-brand-dark shadow-sm'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('register')}
-            className={`py-2 rounded-lg transition-all ${
-              mode === 'register'
-                ? 'bg-brand-gold text-brand-dark shadow-sm'
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Sign Up
-          </button>
-        </div>
+        <div className="flex items-center gap-3 border-b border-brand-cardBorder pb-5"><span className="rounded-2xl bg-brand-gold/15 p-3 text-brand-gold"><User size={24} /></span><div><h2 className="text-lg font-bold text-white">{mode === 'register' ? 'Join GPDS Game Shop' : 'Sign in to your account'}</h2><p className="mt-1 text-xs text-gray-400">{mode === 'register' ? 'Your gamer profile starts here.' : 'Enter your account details below.'}</p></div></div>
 
         <button
           type="button"
@@ -166,13 +145,13 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           className="w-full py-3 px-4 rounded-xl bg-white text-gray-900 font-bold text-xs flex items-center justify-center gap-3 hover:bg-gray-100 transition-all"
         >
           <span className="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center font-black text-sm">G</span>
-          Continue with Google
+          {mode === 'register' ? 'Sign up with Google' : 'Sign in with Google'}
         </button>
 
         <div className="relative flex items-center justify-center">
           <div className="border-t border-brand-cardBorder w-full" />
           <span className="bg-brand-card px-3 text-[10px] text-gray-500 uppercase font-bold absolute">
-            Or with email
+            {mode === 'register' ? 'Or create an account with email' : 'Or sign in with email'}
           </span>
         </div>
 
@@ -228,7 +207,7 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
 
           <div className="space-y-1">
             <div className="flex justify-between items-center">
-              <label htmlFor="password" className="font-bold text-gray-300 block">Password</label>
+              <label htmlFor="password" className="font-bold text-gray-300 block">{mode === 'register' ? 'Create a password' : 'Password'}</label>
               {mode === 'login' && (
                 <button
                   type="button"
@@ -294,10 +273,11 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
             disabled={isSubmitting}
             className="w-full py-3.5 bg-gradient-to-r from-brand-gold via-brand-goldLight to-brand-gold text-brand-dark font-display font-black text-xs uppercase tracking-wider rounded-xl shadow-gold-glow hover:opacity-95 transition-all mt-2"
           >
-            {isSubmitting ? 'Connecting...' : mode === 'login' ? 'Sign In to Dashboard' : 'Create Free Account'}
+            {isSubmitting ? (mode === 'register' ? 'Creating your account...' : 'Signing in...') : mode === 'login' ? 'Sign In to Dashboard' : 'Create Free Account'}
           </button>
         </form>
 
+        <p className="text-center text-sm text-gray-400">{mode === 'register' ? 'Already have an account? ' : 'New to GPDS? '}<Link to={mode === 'register' ? '/login' : '/register'} className="font-bold text-brand-gold hover:underline">{mode === 'register' ? 'Sign in' : 'Create an account'}</Link></p>
         {error && (
           <p role="alert" className="text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-xl p-3">
             {error}
@@ -306,7 +286,7 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
 
         <div className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1.5 pt-2">
           <ShieldCheck className="w-4 h-4 text-green-400" />
-          <span>Encrypted security. Your privacy is 100% guarded.</span>
+          <span>Your password is securely hashed.</span>
         </div>
 
       </div>

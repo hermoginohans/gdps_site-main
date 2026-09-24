@@ -4,10 +4,13 @@ use App\Http\Controllers\AdminPaymentMethodController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\SalesChatController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StreamerCodeController;
 use App\Http\Middleware\EnsureAccountEnabled;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/sales-chat', [SalesChatController::class, 'reply'])->middleware('throttle:10,1');
 
 Route::get('/promotion', [PromotionController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);

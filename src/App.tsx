@@ -12,6 +12,7 @@ import { CartDrawer } from './components/common/CartDrawer';
 import { QuickSearchModal } from './components/common/QuickSearchModal';
 import { LoadingScreen } from './components/common/LoadingScreen';
 import { PromotionalPopup } from './components/common/PromotionalPopup';
+import { SalesChat } from './components/common/SalesChat';
 import { EsportsGlobalBackground } from './components/layout/EsportsGlobalBackground';
 
 import { HomePage } from './pages/HomePage';
@@ -99,6 +100,7 @@ const AppContent: React.FC = () => {
 
       {/* Global interactive slide-out cart drawer */}
       <CartDrawer />
+      <SalesChat />
 
       {/* Command+K quick search modal */}
       <QuickSearchModal 

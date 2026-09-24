@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-4.1-mini'),
+    ],
     'supplier' => [
         'products_url' => env('SUPPLIER_PRODUCTS_URL') ?: 'https://admin.gpdsgameshop.com/api/product',
     ],

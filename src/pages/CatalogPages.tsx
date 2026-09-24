@@ -17,7 +17,7 @@ function ProductDescription({ description }: { description: string }) {
 function PackageSelector({ product }: { product: OfficialProduct }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [paymentMethods, setPaymentMethods] = useState<{ id: number; name: string; vendor: string; description: string | null }[]>([]);
+  const paymentMethods = [{ id: 1, name: 'GCash', vendor: 'Demo', description: 'Simulated GCash payment. No account or money required.' }, { id: 2, name: 'Maya', vendor: 'Demo', description: 'Simulated Maya payment. No account or money required.' }];
   const [step, setStep] = useState<'select' | 'checkout' | 'complete'>('select');
   const [account, setAccount] = useState<Record<string, string>>({});
   const [payment, setPayment] = useState('GCash');
@@ -29,16 +29,12 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
   const [reference, setReference] = useState('');
   const checkoutHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { checkoutHeading.current?.focus(); }, [step]);
-  useEffect(() => {
-    apiRequest('/api/payment-methods')
-      .then(data => setPaymentMethods(data.methods ?? []))
-      .catch(() => setPaymentMethods([]));
-  }, []);
+
   const packages = product.packages ?? [];
   const packageBrowser = usePackageBrowser(packages);
   const selected = packages.find(item => item.id === selectedId && item.stock !== 0);
   const price = (value: number) => new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
-  const subtotal = couponApplied && quote ? quote.subtotalCentavos : Math.round((selected?.price ?? 0) * 100);
+  const subtotal = couponApplied && quote ? quote.subtotalCentavos : Math.round((selected?.price ?? 0) * 100) * quantity;
   const discount = couponApplied && quote ? quote.discountCentavos : 0;
   const paymentIcon = (name: string) => {
     const normalized = name.toLowerCase();
@@ -87,29 +83,29 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
         <p className="mt-2 text-gray-300">Visa and Mastercard payments are processed securely through {selectedPaymentMethod?.vendor || 'our payment gateway'}.</p>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-xs text-gray-400"><li>Major Visa and Mastercard debit or credit cards are accepted.</li><li>Your full card details are not stored by the shop.</li><li>Charges are made at the time of purchase.</li></ul>
       </aside>}
-      <label htmlFor="demo-coupon" className="block text-sm">Coupon code</label>
+      <label htmlFor="demo-coupon" className="block text-sm">Demo coupon code (try DEMO10)</label>
       <div className="flex gap-2"><input id="demo-coupon" className="dashboard-wallet-input min-w-0 flex-1" disabled={quoting} value={coupon}
         onChange={event => { setCoupon(event.target.value); setCouponApplied(false); setCouponMessage(''); }} />
         <button type="button" disabled={quoting} className="account-gold-button" onClick={async () => {
           setQuoting(true); setCouponApplied(false); setCouponMessage('');
           try {
-            await apiRequest('/sanctum/csrf-cookie');
-            const result = await apiRequest('/api/coupons/quote', { method: 'POST', body: JSON.stringify({ code: coupon, slug: product.slug, item_id: selected.id }) });
-            setQuote(result); setCouponApplied(true); setCouponMessage(`${result.code} applied.`);
+            if (coupon.trim().toUpperCase() !== 'DEMO10') throw new Error('For this demo, use DEMO10 for 10% off.');
+            const total = Math.round(selected.price * 100) * quantity;
+            setQuote({ code: 'DEMO10', subtotalCentavos: total, discountCentavos: Math.round(total * 0.1) }); setCouponApplied(true); setCouponMessage('DEMO10 applied: 10% demo discount.');
           } catch (error) { setCouponMessage(error instanceof Error ? error.message : 'Unable to apply coupon.'); }
           finally { setQuoting(false); }
         }}>{quoting ? 'Checking…' : 'Apply'}</button></div>
       <p role="status" className="text-sm">{couponMessage}</p>
     </> : <p role="status">Reference: {reference}<br />Simulated payment via {payment}. No money was charged and no items will be delivered.</p>}
     <dl className="space-y-2">
-      <div className="flex justify-between"><dt>Subtotal</dt><dd>{price(subtotal / 100)}</dd></div>
+      <div className="flex justify-between"><dt>Subtotal ({quantity} ? {price(selected.price)})</dt><dd>{price(subtotal / 100)}</dd></div>
       <div className="flex justify-between"><dt>Discount{couponApplied && quote ? (' (' + quote.code + ')') : ''}</dt><dd>−{price(discount / 100)}</dd></div>
       <div className="flex justify-between font-bold text-brand-gold"><dt>Demo total</dt><dd>{price((subtotal - discount) / 100)}</dd></div>
     </dl>
     {step === 'checkout' ? <div className="flex flex-wrap gap-3">
       <button type="button" className="account-gold-button" disabled={quoting} onClick={() => { setReference(`DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`); setStep('complete'); }}>Simulate payment</button>
       <button type="button" disabled={quoting} onClick={() => { setCouponApplied(false); setStep('select'); }}>Back to selection</button>
-    </div> : <button type="button" className="account-gold-button" onClick={() => { setStep('select'); setSelectedId(null); setAccount({}); setCoupon(''); setCouponApplied(false); setCouponMessage(''); }}>Start another demo</button>}
+    </div> : <button type="button" className="account-gold-button" onClick={() => { setStep('select'); setSelectedId(null); setQuantity(1); setAccount({}); setCoupon(''); setCouponApplied(false); setCouponMessage(''); }}>Start another demo</button>}
   </section>;
   return <form className="min-w-0 space-y-5" onSubmit={event => {
     event.preventDefault();

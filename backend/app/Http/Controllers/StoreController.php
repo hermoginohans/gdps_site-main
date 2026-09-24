@@ -136,7 +136,7 @@ class StoreController extends Controller
         } catch (\Throwable $exception) {
             report($exception);
 
-            return response()->json(['message' => 'Game details are temporarily unavailable. Please try again.'], 503);
+            return response()->json(['message' => 'Game details are temporarily unavailable. Please try again.', 'debug' => $exception->getMessage()], 503);
         }
     }
 

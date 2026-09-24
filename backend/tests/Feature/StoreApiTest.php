@@ -30,6 +30,20 @@ class StoreApiTest extends TestCase
         return ['name' => 'Test game', 'slug' => 'test-game', 'category' => 'Games', 'picture' => '/games/test.webp', 'description' => 'Test product', 'minPrice' => 100, 'maxPrice' => 200, 'isGiftCard' => false];
     }
 
+    public function test_account_returns_only_own_orders_without_legacy_tables(): void
+    {
+        $owner = User::factory()->create();
+        $other = User::factory()->create();
+        $product = DB::table('products')->insertGetId(['slug' => 'account-test', 'data' => json_encode(['name' => 'Test game'])]);
+        foreach ([$owner, $other] as $user) {
+            DB::table('orders')->insert(['user_id' => $user->id, 'product_id' => $product, 'number' => 'TEST-'.$user->id, 'status' => 'pending', 'amount_centavos' => 12345, 'details' => json_encode(['package_name' => '100 Diamonds']), 'created_at' => now(), 'updated_at' => now()]);
+        }
+        $this->actingAs($owner)->getJson('/api/account')->assertOk()
+            ->assertJsonCount(1, 'orders')->assertJsonPath('orders.0.number', 'TEST-'.$owner->id)
+            ->assertJsonPath('orders.0.game', 'Test game')->assertJsonPath('orders.0.amount_centavos', 12345)
+            ->assertJsonPath('orders.0.denomination', '100 Diamonds');
+    }
+
     public function test_guests_and_customers_cannot_manage_products(): void
     {
         $this->postJson('/api/admin/products', $this->product())->assertUnauthorized();

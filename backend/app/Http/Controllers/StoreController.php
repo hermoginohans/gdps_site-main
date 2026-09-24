@@ -91,9 +91,9 @@ class StoreController extends Controller
             }
 
             $detail = Http::acceptJson()->connectTimeout(5)->timeout(15)
-                    ->get(rtrim($url, '/').'/'.rawurlencode($slug))->throw()->json();
+                ->get(rtrim($url, '/').'/'.rawurlencode($slug))->throw()->json();
             $items = Http::acceptJson()->connectTimeout(5)->timeout(15)
-                    ->get(dirname($url).'/product-items/'.$product['id'], ['currency_code' => 'PHP'])->throw()->json();
+                ->get(dirname($url).'/product-items/'.$product['id'], ['currency_code' => 'PHP'])->throw()->json();
             if (($detail['code'] ?? null) !== 200 || (int) ($detail['payload']['id'] ?? 0) !== $product['id'] ||
                     ($items['code'] ?? null) !== 200 || ! is_array($items['payload'] ?? null)) {
                 throw new \UnexpectedValueException('Invalid supplier product details.');
@@ -101,29 +101,29 @@ class StoreController extends Controller
 
             $product['description'] = $this->cleanDescription($detail['payload']['description'] ?? $product['description']);
             $product['inputFields'] = collect($detail['payload']['input_format'] ?? [])
-                    ->filter(fn ($field): bool => is_array($field) && is_string($field['name'] ?? null))
-                    ->map(fn (array $field): array => [
-                        'name' => $field['name'],
-                        'label' => (string) ($field['label'] ?? $field['name']),
-                        'placeholder' => (string) ($field['placeholder'] ?? ''),
-                        'type' => ($field['type'] ?? 'text') === 'select' ? 'select' : 'text',
-                        'options' => collect($field['options'] ?? [])->map(fn ($option): array => [
-                            'value' => (string) (is_array($option) ? ($option['value'] ?? '') : $option),
-                            'label' => (string) (is_array($option) ? ($option['label'] ?? $option['value'] ?? '') : $option),
-                        ])->values()->all(),
-                    ])->values()->all();
+                ->filter(fn ($field): bool => is_array($field) && is_string($field['name'] ?? null))
+                ->map(fn (array $field): array => [
+                    'name' => $field['name'],
+                    'label' => (string) ($field['label'] ?? $field['name']),
+                    'placeholder' => (string) ($field['placeholder'] ?? ''),
+                    'type' => ($field['type'] ?? 'text') === 'select' ? 'select' : 'text',
+                    'options' => collect($field['options'] ?? [])->map(fn ($option): array => [
+                        'value' => (string) (is_array($option) ? ($option['value'] ?? '') : $option),
+                        'label' => (string) (is_array($option) ? ($option['label'] ?? $option['value'] ?? '') : $option),
+                    ])->values()->all(),
+                ])->values()->all();
             $product['packages'] = collect($items['payload'])->map(function (array $item): array {
-                    if (! isset($item['id'], $item['name']) || ! is_numeric($item['total_price'] ?? null) || $item['total_price'] < 0) {
-                        throw new \UnexpectedValueException('Invalid supplier item.');
-                    }
+                if (! isset($item['id'], $item['name']) || ! is_numeric($item['total_price'] ?? null) || $item['total_price'] < 0) {
+                    throw new \UnexpectedValueException('Invalid supplier item.');
+                }
 
-                    return [
-                        'id' => (string) $item['id'],
-                        'name' => $item['name'],
-                        'price' => (float) $item['total_price'],
-                        'stock' => $item['stock'] ?? null,
-                    ];
-                })->values()->all();
+                return [
+                    'id' => (string) $item['id'],
+                    'name' => $item['name'],
+                    'price' => (float) $item['total_price'],
+                    'stock' => $item['stock'] ?? null,
+                ];
+            })->values()->all();
             $prices = array_column($product['packages'], 'price');
             $product['minPrice'] = $prices ? min($prices) : null;
             $product['maxPrice'] = $prices ? max($prices) : null;
@@ -233,6 +233,7 @@ class StoreController extends Controller
                     'id' => $entry->id, 'description' => $entry->description,
                     'amount_centavos' => (int) round($entry->amount * 100), 'created_at' => $entry->created_at,
                 ]);
+
             return response()->json(['orders' => $orders, 'walletEntries' => $entries, 'balanceCentavos' => (int) round($balances->sum('amount') * 100)]);
         }
 
@@ -242,6 +243,31 @@ class StoreController extends Controller
     private function accountOrders(int $userId): mixed
     {
         $schema = DB::connection()->getSchemaBuilder();
+        if ($schema->hasColumn('orders', 'number')) {
+            return DB::table('orders as o')
+                ->leftJoin('products as p', 'p.id', '=', 'o.product_id')
+                ->where('o.user_id', $userId)->latest('o.id')->limit(100)
+                ->get(['o.*', 'p.data as product_data'])
+                ->map(function (object $order): array {
+                    $details = json_decode($order->details, true) ?: [];
+                    $product = json_decode($order->product_data ?? '{}', true) ?: [];
+
+                    return [
+                        'id' => $order->id, 'number' => $order->number,
+                        'game' => $product['name'] ?? 'Product unavailable',
+                        'denomination' => $details['package_name'] ?? $details['denomination'] ?? '',
+                        'status' => $order->status,
+                        'paymentStatus' => 'unavailable',
+                        'deliveryStatus' => $order->status,
+                        'paymentMethod' => null, 'paymentId' => null, 'paymentCode' => null,
+                        'paymentUrl' => null, 'supplier' => null, 'supplierReference' => null,
+                        'account' => $details['account'] ?? null, 'note' => null,
+                        'amount_centavos' => (int) $order->amount_centavos,
+                        'currency_code' => 'PHP', 'created_at' => $order->created_at,
+                        'updated_at' => $order->updated_at, 'history' => [],
+                    ];
+                });
+        }
         $orders = DB::table('orders as o')
             ->leftJoin('product_items as i', 'i.id', '=', 'o.product_item_id')
             ->leftJoin('products as p', 'p.id', '=', 'i.product_id')

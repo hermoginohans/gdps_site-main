@@ -223,7 +223,24 @@ export function CatalogPages({ detail = false }: { detail?: boolean }) {
         }
         if (!controller.signal.aborted) setDetails({ slug, product });
       })
-      .catch(() => { if (!controller.signal.aborted) setDetails({ slug, error: 'Unable to load game packages. Please try again.' }); });
+      .catch(async () => {
+        if (controller.signal.aborted) return;
+        const parent = products.find(candidate => candidate.slug === slug || candidate.gameGroup?.variants.some(variant => variant.slug === slug));
+        const variant = parent?.gameGroup?.variants.find(item => item.slug === slug);
+        const fallbackProduct = variant && parent ? { ...parent, id: variant.id, name: variant.name, slug: variant.slug, picture: variant.picture, rating: variant.average_rating, reviewsCount: variant.total_reviews } : parent;
+        if (!fallbackProduct) {
+          setDetails({ slug, error: 'Unable to load game packages. Please try again.' });
+          return;
+        }
+        try {
+          const itemsResponse = await fetch(`https://admin.gpdsgameshop.com/api/product-items/${fallbackProduct.id}?currency_code=PHP`, { signal: controller.signal });
+          const itemsData = await itemsResponse.json();
+          const packages: NonNullable<OfficialProduct['packages']> = (itemsData.payload ?? []).filter((item: { id?: number; name?: string; total_price?: number }) => item.id && item.name && Number.isFinite(Number(item.total_price))).map((item: { id: number; name: string; total_price: number; stock?: number | null }) => ({ id: String(item.id), name: item.name, price: Number(item.total_price), stock: item.stock ?? null }));
+          setDetails({ slug, product: packages.length ? { ...fallbackProduct, packages, minPrice: Math.min(...packages.map(item => item.price)), maxPrice: Math.max(...packages.map(item => item.price)) } : fallbackProduct });
+        } catch {
+          if (!controller.signal.aborted) setDetails({ slug, error: 'Unable to load game packages. Please try again.' });
+        }
+      });
     return () => controller.abort();
   }, [supplier, params.gameId, retry]);
   if (loading) return <p className="p-12 text-center">Loading catalog…</p>;

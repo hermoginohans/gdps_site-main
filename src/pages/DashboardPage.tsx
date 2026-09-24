@@ -1,3 +1,4 @@
+import { DemoOrders } from '../components/common/DemoOrders';
 import { AccountRecords } from '../components/common/AccountRecords';
 import React, { useState } from 'react';
 import { User, Clock, Gift, ShieldCheck } from 'lucide-react';
@@ -97,7 +98,7 @@ export const DashboardPage: React.FC = () => {
           { id: 'auction', label: 'Auction', icon: Gavel },
         ] as const).map(tab => <button type="button" key={tab.id} aria-current={activeTab === tab.id ? 'page' : undefined} onClick={() => { setActiveTab(tab.id); }}><tab.icon aria-hidden="true" />{tab.label}</button>)}
       </nav>
-      <div className="min-w-0">
+      <div className="min-w-0">{activeTab === 'orders' && <DemoOrders />}
       {activeTab === 'auction' && <DashboardAuction />}
       {activeTab === 'gift-cards' && <DashboardGiftCards />}
       {(activeTab === 'affiliate' || activeTab === 'streamer') && <DashboardPartnerRegistration program={activeTab} />}

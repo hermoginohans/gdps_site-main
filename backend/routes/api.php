@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminPaymentMethodController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CouponController;
+use App\Http\Controllers\DemoOrderController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\SalesChatController;
 use App\Http\Controllers\StoreController;
@@ -20,6 +21,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register/availability', [AuthController::class, 'availability'])->middleware('throttle:60,1');
 
 Route::middleware(['auth:sanctum', EnsureAccountEnabled::class])->group(function (): void {
+    Route::get('/demo-orders', [DemoOrderController::class, 'index']);
+    Route::post('/demo-orders', [DemoOrderController::class, 'store'])->middleware('throttle:10,1');
     Route::get('/admin/promotion', [PromotionController::class, 'edit']);
     Route::put('/admin/promotion', [PromotionController::class, 'update']);
     Route::get('/admin/streamer-codes', [StreamerCodeController::class, 'index']);

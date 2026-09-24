@@ -27,6 +27,9 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
   const [quoting, setQuoting] = useState(false);
   const [couponMessage, setCouponMessage] = useState('');
   const [reference, setReference] = useState('');
+  const demoRequest = useRef(crypto.randomUUID());
+  const [savingDemo, setSavingDemo] = useState(false);
+  const [demoError, setDemoError] = useState('');
   const checkoutHeading = useRef<HTMLHeadingElement>(null);
   useEffect(() => { checkoutHeading.current?.focus(); }, [step]);
 
@@ -97,15 +100,20 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
         }}>{quoting ? 'Checking…' : 'Apply'}</button></div>
       <p role="status" className="text-sm">{couponMessage}</p>
     </> : <p role="status">Reference: {reference}<br />Simulated payment via {payment}. No money was charged and no items will be delivered.</p>}
-    <dl className="space-y-2">
+    <p className="text-sm">Sign in before saving a demo purchase. Records appear in your Order History.</p>{demoError && <p role="alert" className="text-red-300">{demoError}</p>}<dl className="space-y-2">
       <div className="flex justify-between"><dt>Subtotal ({quantity} ? {price(selected.price)})</dt><dd>{price(subtotal / 100)}</dd></div>
       <div className="flex justify-between"><dt>Discount{couponApplied && quote ? (' (' + quote.code + ')') : ''}</dt><dd>−{price(discount / 100)}</dd></div>
       <div className="flex justify-between font-bold text-brand-gold"><dt>Demo total</dt><dd>{price((subtotal - discount) / 100)}</dd></div>
     </dl>
     {step === 'checkout' ? <div className="flex flex-wrap gap-3">
-      <button type="button" className="account-gold-button" disabled={quoting} onClick={() => { setReference(`DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`); setStep('complete'); }}>Simulate payment</button>
-      <button type="button" disabled={quoting} onClick={() => { setCouponApplied(false); setStep('select'); }}>Back to selection</button>
-    </div> : <button type="button" className="account-gold-button" onClick={() => { setStep('select'); setSelectedId(null); setQuantity(1); setAccount({}); setCoupon(''); setCouponApplied(false); setCouponMessage(''); }}>Start another demo</button>}
+      <button type="button" className="account-gold-button" disabled={quoting || savingDemo} onClick={async () => {
+        if (savingDemo) return; setSavingDemo(true); setDemoError('');
+        try { const result = await apiRequest('/api/demo-orders', { method: 'POST', body: JSON.stringify({ request_id: demoRequest.current, game: product.name, package: selected.name, quantity, unit_centavos: Math.round(selected.price * 100), payment, coupon: couponApplied ? 'DEMO10' : null, account }) }); setReference(result.reference); setStep('complete'); }
+        catch (e) { setDemoError(e instanceof Error ? e.message : 'Unable to save demo order.'); }
+        finally { setSavingDemo(false); }
+      }}>{savingDemo ? 'Saving demo...' : 'Save demo purchase'}</button>
+      <button type="button" disabled={quoting || savingDemo} onClick={() => { setCouponApplied(false); setStep('select'); }}>Back to selection</button>
+    </div> : <button type="button" className="account-gold-button" onClick={() => { demoRequest.current = crypto.randomUUID(); setDemoError(''); setStep('select'); setSelectedId(null); setQuantity(1); setAccount({}); setCoupon(''); setCouponApplied(false); setCouponMessage(''); }}>Start another demo</button>}
   </section>;
   return <form className="min-w-0 space-y-5" onSubmit={event => {
     event.preventDefault();

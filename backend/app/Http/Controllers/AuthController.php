@@ -42,7 +42,13 @@ class AuthController extends Controller
             'email.unique' => 'This email is already used.',
         ]);
 
-        $user = User::create($validated);
+        try {
+            $user = User::create($validated);
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
 
         return response()->json(['user' => $this->profile($user)], 201);
     }

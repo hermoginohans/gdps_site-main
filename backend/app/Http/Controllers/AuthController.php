@@ -44,32 +44,20 @@ class AuthController extends Controller
             'email.unique' => 'This email is already used.',
         ]);
 
-        try {
-            $userColumns = Schema::getColumnListing('users');
-            $userData = [
+        $userColumns = Schema::getColumnListing('users');
+        $userData = [
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
-            if (in_array('account_status', $userColumns, true)) $userData['account_status'] = 'active';
-            if (in_array('first_login', $userColumns, true)) $userData['first_login'] = false;
-            if (in_array('is_admin', $userColumns, true)) $userData['is_admin'] = false;
-            if (in_array('loyalty_points', $userColumns, true)) $userData['loyalty_points'] = 0;
-            try {
-                $userId = DB::table('users')->insertGetId($userData);
-            } catch (\Throwable $exception) {
-                report($exception);
-
-                return response()->json(['message' => $exception->getMessage()], 500);
-            }
-            $user = User::findOrFail($userId);
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return response()->json(['message' => $exception->getMessage()], 500);
-        }
+        if (in_array('account_status', $userColumns, true)) $userData['account_status'] = 'active';
+        if (in_array('first_login', $userColumns, true)) $userData['first_login'] = false;
+        if (in_array('is_admin', $userColumns, true)) $userData['is_admin'] = false;
+        if (in_array('loyalty_points', $userColumns, true)) $userData['loyalty_points'] = 0;
+        $userId = DB::table('users')->insertGetId($userData);
+        $user = User::findOrFail($userId);
 
         return response()->json(['user' => $this->profile($user)], 201);
     }
@@ -186,10 +174,10 @@ class AuthController extends Controller
             'id' => (string) $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'avatar' => $user->avatar ?: 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=F0C030&color=151125',
+            'avatar' => ($user->getAttributes()['avatar'] ?? null) ?: 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=F0C030&color=151125',
             'vipTier' => 'Bronze',
-            'loyaltyPoints' => (int) $user->loyalty_points,
-            'isAdmin' => (bool) $user->is_admin,
+            'loyaltyPoints' => (int) ($user->getAttributes()['loyalty_points'] ?? 0),
+            'isAdmin' => (bool) ($user->getAttributes()['is_admin'] ?? false),
             'savedAccounts' => [],
         ];
     }

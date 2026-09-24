@@ -1,0 +1,18 @@
+.registration-page { width: calc(100% - 32px); max-width: 850px; margin: 40px auto; overflow: hidden; border: 1px solid #c4a567; border-radius: 28px; background: radial-gradient(ellipse at bottom right,#40253326,transparent 60%),#100d1d; box-shadow: 0 24px 80px #0005; }
+.registration-hero svg { display: block; width: 100%; height: auto; }
+.registration-page .auth-card { margin: 0; padding: 8px 44px 36px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.registration-page .auth-form-intro,.registration-page .auth-security { display: none; }
+.registration-page .auth-card > button { min-height: 62px; font-size: 18px; border-radius: 14px; }
+.registration-page .auth-card > button > span { color: #4285f4; font-size: 26px; border: 0; width: 28px; height: 28px; }
+.registration-page .auth-card > .relative { margin: 34px 0; }
+.registration-page .auth-card > .relative span { font-size: 12px; background: #100d1d; white-space: nowrap; }
+.registration-page .auth-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 24px; }
+.registration-page .auth-form > * { margin: 0; min-width: 0; }
+.registration-page .auth-form > div:nth-child(-n+2),.registration-page .auth-form > button { grid-column: 1 / -1; }
+.registration-page .auth-form label { font-size: 15px; margin-bottom: 10px; color: #f3f1f8; }
+.registration-page .auth-form input { height: 58px; font-size: 15px; background: #0c0916a0; border-color: #76608f70; border-radius: 14px; padding-left: 44px; }
+.registration-page .auth-form input:focus { border-color: #ffd566; box-shadow: 0 0 0 3px #ffd56615; }
+.registration-page .auth-form > button { min-height: 66px; font-size: 18px; text-transform: none; letter-spacing: 0; border: 1px solid #ffea9e; border-radius: 16px; background: linear-gradient(110deg,#ffc746,#ffe286,#ffc443); box-shadow: 0 8px 30px #e3ad3226,inset 0 0 8px #ffefb3; }
+.registration-terms { text-align: center; font-size: 13px; line-height: 1.8; color: #beb9cf; }.registration-terms a { color: #ffd057; font-weight: 600; }
+.registration-benefits { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; padding: 28px 0; border-top: 1px solid #ffffff15; border-bottom: 1px solid #ffffff15; }.registration-benefits span { display: flex; align-items: center; gap: 10px; font-size: 12px; }.registration-benefits svg { color: #ffce53; flex-shrink: 0; }.registration-page .auth-switch { padding-top: 10px; font-size: 15px; }
+@media(max-width:600px) { .registration-page { margin: 20px auto; border-radius: 20px; }.registration-page .auth-card { padding: 10px 20px 26px; }.registration-page .auth-form { grid-template-columns: minmax(0,1fr); gap: 18px; }.registration-page .auth-form label { font-size: 13px; }.registration-page .auth-card > button { font-size: 15px; min-height: 52px; }.registration-page .auth-form > button { font-size: 16px; }.registration-benefits { grid-template-columns: minmax(0,1fr); gap: 14px; }.registration-page .auth-card > .relative span { font-size: 10px; } }

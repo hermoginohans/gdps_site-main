@@ -1,3 +1,4 @@
+import './AuthPages.css';
 import React, { useEffect, useState, useRef } from 'react';
 import { 
   User, 
@@ -115,10 +116,10 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
   };
 
   return (
-    <div className="max-w-md mx-auto px-4 py-12 space-y-8">
+    <div className={mode === 'register' ? 'registration-page' : 'max-w-md mx-auto px-4 py-12 space-y-8'}>
       
       {/* Brand Header */}
-      <div className="text-center space-y-3">
+      {mode === 'register' ? <header className="registration-hero"><svg viewBox="54 37 930 482" aria-hidden="true"><image href={assetUrl('/register-reference.png')} width="1037" height="1517" /></svg><h1 className="sr-only">Join the GPDS Community</h1><p className="sr-only">Create your account and explore your favorite games.</p></header> : <div className="text-center space-y-3">
         <Link to="/" className="inline-block group" aria-label="GPDS GAME SHOP Home">
           <img 
             src={assetUrl("/gpds_logo.png")} 
@@ -130,14 +131,14 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           {mode === 'login' ? 'Welcome Back, Gamer' : 'Create your free account'}
         </h1>
         <p className="text-xs text-gray-400">
-          {mode === 'register' ? 'Choose your gamer name and set up your account to start exploring GPDS.' : 'Sign in to manage your account and view your orders.'}
+          Sign in to manage your account and view your orders.
         </p>
-      </div>
+      </div>}
 
       {/* Auth Card */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-brand-card border border-brand-cardBorder shadow-2xl space-y-6">
+      <div className={`auth-card p-6 sm:p-8 rounded-3xl bg-brand-card border border-brand-cardBorder shadow-2xl space-y-6`}>
         
-        <div className="flex items-center gap-3 border-b border-brand-cardBorder pb-5"><span className="rounded-2xl bg-brand-gold/15 p-3 text-brand-gold"><User size={24} /></span><div><h2 className="text-lg font-bold text-white">{mode === 'register' ? 'Join GPDS Game Shop' : 'Sign in to your account'}</h2><p className="mt-1 text-xs text-gray-400">{mode === 'register' ? 'Your gamer profile starts here.' : 'Enter your account details below.'}</p></div></div>
+        <div className="auth-form-intro flex items-center gap-3 border-b border-brand-cardBorder pb-5"><span className="rounded-2xl bg-brand-gold/15 p-3 text-brand-gold"><User size={24} /></span><div><h2 className="text-lg font-bold text-white">{mode === 'register' ? 'Join GPDS Game Shop' : 'Sign in to your account'}</h2><p className="mt-1 text-xs text-gray-400">{mode === 'register' ? 'Your gamer profile starts here.' : 'Enter your account details below.'}</p></div></div>
 
         <button
           type="button"
@@ -145,18 +146,18 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
           className="w-full py-3 px-4 rounded-xl bg-white text-gray-900 font-bold text-xs flex items-center justify-center gap-3 hover:bg-gray-100 transition-all"
         >
           <span className="w-5 h-5 rounded-full border border-gray-200 flex items-center justify-center font-black text-sm">G</span>
-          {mode === 'register' ? 'Sign up with Google' : 'Sign in with Google'}
+          {mode === 'register' ? 'Continue with Google' : 'Sign in with Google'}
         </button>
 
         <div className="relative flex items-center justify-center">
           <div className="border-t border-brand-cardBorder w-full" />
           <span className="bg-brand-card px-3 text-[10px] text-gray-500 uppercase font-bold absolute">
-            {mode === 'register' ? 'Or create an account with email' : 'Or sign in with email'}
+            {mode === 'register' ? 'Or create your account' : 'Or sign in with email'}
           </span>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="auth-form space-y-4 text-xs">
           {mode === 'register' && (
             <div className="space-y-1">
               <label htmlFor="nickname" className="font-bold text-gray-300 block">Gamer Name / Nickname</label>
@@ -223,6 +224,7 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
               <input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
+                minLength={mode === 'register' ? 8 : undefined}
                 autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                 required
                 placeholder="••••••••"
@@ -273,18 +275,19 @@ export const AuthPages: React.FC<{ initialMode?: 'login' | 'register' }> = ({ in
             disabled={isSubmitting}
             className="w-full py-3.5 bg-gradient-to-r from-brand-gold via-brand-goldLight to-brand-gold text-brand-dark font-display font-black text-xs uppercase tracking-wider rounded-xl shadow-gold-glow hover:opacity-95 transition-all mt-2"
           >
-            {isSubmitting ? (mode === 'register' ? 'Creating your account...' : 'Signing in...') : mode === 'login' ? 'Sign In to Dashboard' : 'Create Free Account'}
+            {isSubmitting ? (mode === 'register' ? 'Creating your account...' : 'Signing in...') : mode === 'login' ? 'Sign In to Dashboard' : 'Create My Account ?'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-400">{mode === 'register' ? 'Already have an account? ' : 'New to GPDS? '}<Link to={mode === 'register' ? '/login' : '/register'} className="font-bold text-brand-gold hover:underline">{mode === 'register' ? 'Sign in' : 'Create an account'}</Link></p>
+        {mode === 'register' && <><p className="registration-terms">By creating an account, you agree to our <Link to="/terms-and-conditions">Terms of Service</Link> and <Link to="/privacy-policy">Privacy Policy</Link>.</p><div className="registration-benefits"><span><ShieldCheck />Password protection</span><span><ArrowRight />Account access</span><span><User />GPDS community</span></div></>}
+        <p className="auth-switch text-center text-sm text-gray-400">{mode === 'register' ? 'Already have an account? ' : 'New to GPDS? '}<Link to={mode === 'register' ? '/login' : '/register'} className="font-bold text-brand-gold hover:underline">{mode === 'register' ? 'Sign in' : 'Create an account'}</Link></p>
         {error && (
           <p role="alert" className="text-xs text-red-300 bg-red-500/10 border border-red-500/30 rounded-xl p-3">
             {error}
           </p>
         )}
 
-        <div className="text-[11px] text-gray-400 text-center flex items-center justify-center gap-1.5 pt-2">
+        <div className="auth-security text-[11px] text-gray-400 text-center flex items-center justify-center gap-1.5 pt-2">
           <ShieldCheck className="w-4 h-4 text-green-400" />
           <span>Your password is securely hashed.</span>
         </div>

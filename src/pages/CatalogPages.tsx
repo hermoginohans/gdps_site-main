@@ -101,7 +101,7 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
       <p role="status" className="text-sm">{couponMessage}</p>
     </> : <p role="status">Reference: {reference}<br />Simulated payment via {payment}. No money was charged and no items will be delivered.</p>}
     <p className="text-sm">Sign in before saving a demo purchase. Records appear in your Order History.</p>{demoError && <p role="alert" className="text-red-300">{demoError}</p>}<dl className="space-y-2">
-      <div className="flex justify-between"><dt>Subtotal ({quantity} ? {price(selected.price)})</dt><dd>{price(subtotal / 100)}</dd></div>
+      <div className="flex justify-between"><dt>Subtotal</dt><dd>{price(subtotal / 100)}</dd></div>
       <div className="flex justify-between"><dt>Discount{couponApplied && quote ? (' (' + quote.code + ')') : ''}</dt><dd>−{price(discount / 100)}</dd></div>
       <div className="flex justify-between font-bold text-brand-gold"><dt>Demo total</dt><dd>{price((subtotal - discount) / 100)}</dd></div>
     </dl>

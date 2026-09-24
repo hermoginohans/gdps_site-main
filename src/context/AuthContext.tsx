@@ -97,9 +97,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    await apiRequest('/api/logout', { method: 'POST' });
-    window.localStorage.removeItem('gpds_auth_token');
-    setUser(null);
+    try {
+      await apiRequest('/api/logout', { method: 'POST' });
+    } finally {
+      window.localStorage.removeItem('gpds_auth_token');
+      setUser(null);
+    }
   };
 
   const addSavedAccount = (account: Omit<UserSavedAccount, 'id'>) => {

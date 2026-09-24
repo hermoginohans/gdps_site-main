@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('discounts') || Schema::hasColumn('discounts', 'minimum_spend')) {
+            return;
+        }
+
         Schema::table('discounts', function (Blueprint $table) {
             $table->decimal('minimum_spend', 12, 2)->default(0);
         });
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('discounts') || ! Schema::hasColumn('discounts', 'minimum_spend')) {
+            return;
+        }
+
         Schema::table('discounts', function (Blueprint $table) {
             $table->dropColumn('minimum_spend');
         });

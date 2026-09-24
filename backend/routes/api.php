@@ -7,12 +7,10 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\StreamerCodeController;
 use App\Http\Middleware\EnsureAccountEnabled;
 use Illuminate\Support\Facades\Route;
-Route::group(function (): void {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-    Route::post('/login', [AuthController::class, 'login']);
-});
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register/availability', [AuthController::class, 'availability'])->middleware('throttle:60,1');
 
 Route::middleware(['auth:sanctum', EnsureAccountEnabled::class])->group(function (): void {

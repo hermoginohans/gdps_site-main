@@ -26,6 +26,7 @@ if (import.meta.env.DEV &&
 }
 const API_URL = apiUrl.toString().replace(/\/$/, '');
 const LOADER_DURATION_MS = 1000;
+const authToken = () => window.localStorage.getItem('gpds_auth_token');
 
 const csrfToken = () => {
   const token = document.cookie
@@ -43,6 +44,7 @@ export const apiRequest = async (path: string, options: RequestInit = {}) => {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
+      ...(authToken() ? { Authorization: `Bearer ${authToken()}` } : {}),
       ...(xsrfToken ? { 'X-XSRF-TOKEN': xsrfToken } : {}),
       ...options.headers
     }
@@ -77,6 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       method: 'POST',
       body: JSON.stringify({ email, password })
     });
+    if (data.token) window.localStorage.setItem('gpds_auth_token', data.token);
     setUser(data.user ?? data);
   };
 
@@ -85,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       method: 'POST',
       body: JSON.stringify({ name, email, password, password_confirmation: passwordConfirmation })
     });
+    if (data.token) window.localStorage.setItem('gpds_auth_token', data.token);
     setUser(data.user ?? data);
   };
 
@@ -94,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     await apiRequest('/api/logout', { method: 'POST' });
+    window.localStorage.removeItem('gpds_auth_token');
     setUser(null);
   };
 

@@ -59,7 +59,7 @@ class AuthController extends Controller
         $userId = DB::table('users')->insertGetId($userData);
         $user = User::findOrFail($userId);
 
-        return response()->json(['user' => $this->profile($user)], 201);
+        return response()->json(['user' => $this->profile($user), 'token' => $user->createToken('web')->plainTextToken], 201);
     }
 
     public function login(Request $request): JsonResponse
@@ -78,7 +78,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'This account has been disabled. Contact support for help.'], 403);
         }
 
-        return response()->json(['user' => $this->profile($user)]);
+        return response()->json(['user' => $this->profile($user), 'token' => $user->createToken('web')->plainTextToken]);
     }
 
     public function forgotPassword(Request $request): JsonResponse

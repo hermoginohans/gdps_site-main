@@ -4,13 +4,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 
 Route::get('/', function () {
     return response()->json([
         'service' => 'GPDS Game Shop API',
         'status' => 'online',
     ]);
-})->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class]);
+})->withoutMiddleware([StartSession::class, ShareErrorsFromSession::class, PreventRequestForgery::class]);
 
 Route::get('/reset-password/{token}', function (Request $request, string $token) {
     $frontend = rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/');

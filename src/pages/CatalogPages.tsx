@@ -215,7 +215,7 @@ export function CatalogPages({ detail = false }: { detail?: boolean }) {
           try {
             const itemsResponse = await fetch(`https://admin.gpdsgameshop.com/api/product-items/${product.id}?currency_code=PHP`, { signal: controller.signal });
             const itemsData = await itemsResponse.json();
-            const packages = (itemsData.payload ?? []).filter((item: { id?: number; name?: string; total_price?: number }) => item.id && item.name && Number.isFinite(Number(item.total_price))).map((item: { id: number; name: string; total_price: number; stock?: number | null }) => ({ id: String(item.id), name: item.name, price: Number(item.total_price), stock: item.stock ?? null }));
+            const packages: NonNullable<OfficialProduct['packages']> = (itemsData.payload ?? []).filter((item: { id?: number; name?: string; total_price?: number }) => item.id && item.name && Number.isFinite(Number(item.total_price))).map((item: { id: number; name: string; total_price: number; stock?: number | null }) => ({ id: String(item.id), name: item.name, price: Number(item.total_price), stock: item.stock ?? null }));
             if (packages.length) product = { ...product, packages, minPrice: Math.min(...packages.map(item => item.price)), maxPrice: Math.max(...packages.map(item => item.price)) };
           } catch {
             // Keep the backend response when the browser fallback is unavailable.

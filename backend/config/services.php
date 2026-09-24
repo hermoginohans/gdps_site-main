@@ -2,7 +2,7 @@
 
 return [
     'supplier' => [
-        'products_url' => env('SUPPLIER_PRODUCTS_URL'),
+        'products_url' => env('SUPPLIER_PRODUCTS_URL', 'https://admin.gpdsgameshop.com/api/product'),
     ],
 
     /*

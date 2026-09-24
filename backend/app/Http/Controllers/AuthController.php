@@ -33,24 +33,18 @@ class AuthController extends Controller
 
     public function register(Request $request): JsonResponse
     {
-        try {
-            $validated = $request->validate([
-                'name' => ['required', 'string', 'max:255', 'unique:users,name'],
-                'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-                'password' => ['required', 'confirmed', Password::defaults()],
-            ], [
-                'name.unique' => 'This nickname is already used.',
-                'email.unique' => 'This email is already used.',
-            ]);
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:users,name'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ], [
+            'name.unique' => 'This nickname is already used.',
+            'email.unique' => 'This email is already used.',
+        ]);
 
-            $user = User::create($validated);
-            Auth::login($user);
-            $request->session()->regenerate();
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return response()->json(['message' => $exception->getMessage()], 500);
-        }
+        $user = User::create($validated);
+        Auth::login($user);
+        $request->session()->regenerate();
 
         return response()->json(['user' => $this->profile($user)], 201);
     }

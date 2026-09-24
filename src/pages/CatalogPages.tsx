@@ -4,6 +4,7 @@ import { apiRequest } from '../context/AuthContext';
 import { OfficialProduct } from '../data/officialData';
 import { useCatalog } from '../context/CatalogContext';
 import { Link, useRouter } from '../context/RouterContext';
+import { MorePackages, PackageFilters, usePackageBrowser } from '../components/common/PackageBrowser';
 
 function ProductDescription({ description }: { description: string }) {
   if (!description.trim()) return null;
@@ -34,6 +35,7 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
       .catch(() => setPaymentMethods([]));
   }, []);
   const packages = product.packages ?? [];
+  const packageBrowser = usePackageBrowser(packages);
   const selected = packages.find(item => item.id === selectedId && item.stock !== 0);
   const price = (value: number) => new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP' }).format(value);
   const subtotal = couponApplied && quote ? quote.subtotalCentavos : Math.round((selected?.price ?? 0) * 100);
@@ -120,13 +122,15 @@ function PackageSelector({ product }: { product: OfficialProduct }) {
     <fieldset className="space-y-3">
     <legend className="mb-3 text-xl font-bold text-white">Choose a package</legend>
     {!packages.length && <p className="text-gray-400">No packages are currently available.</p>}
+    {!!packages.length && <PackageFilters browser={packageBrowser} />}
     <div className="grid gap-3 sm:grid-cols-2">
-      {packages.map(item => <label key={item.id} className={`group flex min-h-24 items-center gap-3 rounded-xl border p-3 transition ${item.stock === 0 ? 'cursor-not-allowed border-white/10 opacity-50' : selected?.id === item.id ? 'cursor-pointer border-brand-gold bg-brand-gold/10 shadow-[0_0_24px_rgba(245,166,35,.12)]' : 'cursor-pointer border-white/10 bg-white/[.03] hover:border-brand-gold/70 hover:bg-white/[.06]'} focus-within:ring-2 focus-within:ring-brand-gold`}>
+      {packageBrowser.visible.map(item => <label key={item.id} className={`group flex min-h-24 items-center gap-3 rounded-xl border p-3 transition ${item.stock === 0 ? 'cursor-not-allowed border-white/10 opacity-50' : selected?.id === item.id ? 'cursor-pointer border-brand-gold bg-brand-gold/10 shadow-[0_0_24px_rgba(245,166,35,.12)]' : 'cursor-pointer border-white/10 bg-white/[.03] hover:border-brand-gold/70 hover:bg-white/[.06]'} focus-within:ring-2 focus-within:ring-brand-gold`}>
         <input type="radio" name={`package-${product.id}`} value={item.id} checked={selected?.id === item.id} disabled={item.stock === 0} onChange={() => { setSelectedId(item.id); setQuantity(1); }} className="accent-yellow-400" />
         <img src={product.picture} alt="" className="h-12 w-12 rounded-lg object-cover opacity-90" />
         <span className="min-w-0"><span className="block truncate text-sm font-bold text-white">{item.name}</span><span className="mt-1 block text-base font-black text-brand-gold">{price(item.price)}</span>{item.stock === 0 && <span className="block text-xs text-red-300">Out of stock</span>}</span>
       </label>)}
     </div>
+    <MorePackages browser={packageBrowser} />
     <p aria-live="polite" className="text-sm text-brand-gold">
       {selected ? `Selected: ${selected.name} — ${price(selected.price)}` : packages.length ? 'Select a package above.' : ''}
     </p>
@@ -185,7 +189,7 @@ function SupplierProductPage({ product }: { product: OfficialProduct }) {
           <p className="mt-4 max-w-2xl text-sm leading-6 text-gray-300 line-clamp-2">{product.description}</p>
           <div className="mt-6 rounded-2xl border border-white/10 bg-black/25 px-5 py-4"><span className="block text-xs text-gray-400">Starting from</span><strong className="text-3xl text-brand-gold">{price}</strong></div>
           <div className="mt-7 flex justify-end"><span className="text-xs text-gray-400">API catalog pricing</span></div>
-          <div className="mt-3"><PackageSelector product={product} /></div>
+          <div className="mt-3"><PackageSelector key={product.slug} product={product} /></div>
           <p className="mt-6 text-xs text-gray-400">Packages and prices are supplied by the live game catalog. Contact support if an item is unavailable.</p>
           <Link to="/contact" className="mt-4 inline-flex rounded-xl border border-brand-gold/50 px-4 py-2 text-sm font-bold text-brand-gold hover:bg-brand-gold hover:text-brand-dark">Contact support</Link>
         </div>

@@ -25,6 +25,7 @@ import { PaymentModal } from '../components/topup/PaymentModal';
 import { DenominationItem, PaymentMethod, Game } from '../types';
 import { useCatalog } from '../context/CatalogContext';
 import { CatalogPages } from './CatalogPages';
+import { MorePackages, PackageFilters, usePackageBrowser } from '../components/common/PackageBrowser';
 
 export const GameDetailPage: React.FC = () => {
   const { params } = useRouter();
@@ -71,7 +72,7 @@ const GamePurchasePage: React.FC<{ game: Game; databasePackages: boolean }> = ({
   const [promoError, setPromoError] = useState('');
 
   // UI state
-  const [selectedItemTab, setSelectedItemTab] = useState<'All' | 'Passes' | 'Diamonds'>('All');
+  const packageBrowser = usePackageBrowser(game.denominations);
   const [selectedPaymentCategory, setSelectedPaymentCategory] = useState<string>('All');
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -95,14 +96,6 @@ const GamePurchasePage: React.FC<{ game: Game; databasePackages: boolean }> = ({
   }, [game]);
 
   useEffect(() => { setAppliedVoucher(null); setPromoError(''); }, [selectedItem.id, selectedItem.pricePhp]);
-
-  // Filter denominations
-  const filteredDenominations = game.denominations.filter(d => {
-    if (selectedItemTab === 'All') return true;
-    if (selectedItemTab === 'Passes') return d.category === 'Passes';
-    if (selectedItemTab === 'Diamonds') return d.category === 'Diamonds';
-    return true;
-  });
 
   // Filter payment methods
   const filteredPaymentMethods = PAYMENT_METHODS.filter(p => {
@@ -365,27 +358,12 @@ const GamePurchasePage: React.FC<{ game: Game; databasePackages: boolean }> = ({
                 </h2>
               </div>
 
-              {/* Sub-tabs for denominations */}
-              <div className="flex items-center gap-1 bg-[#0E0A1C] p-1 rounded-xl border border-brand-cardBorder self-start sm:self-auto">
-                {(['All', 'Passes', 'Diamonds'] as const).map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setSelectedItemTab(tab)}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                      selectedItemTab === tab
-                        ? 'bg-brand-gold text-brand-dark font-black'
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
             </div>
+            <PackageFilters browser={packageBrowser} />
 
             {/* Denomination Tiles Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-              {filteredDenominations.map(denom => {
+              {packageBrowser.visible.map(denom => {
                 const isSelected = selectedItem?.id === denom.id;
                 return (
                   <div
@@ -428,6 +406,8 @@ const GamePurchasePage: React.FC<{ game: Game; databasePackages: boolean }> = ({
                 );
               })}
             </div>
+            <MorePackages browser={packageBrowser} />
+            <p className="text-sm text-brand-gold" aria-live="polite">Selected: {selectedItem.name} - {formatPrice(selectedItem.pricePhp)}</p>
           </div>
 
           {/* STEP 3: PAYMENT METHOD */}

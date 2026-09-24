@@ -35,17 +35,6 @@ class AuthController extends Controller
 
     public function register(Request $request): JsonResponse
     {
-        try {
-            return $this->registerInternal($request);
-        } catch (\Throwable $exception) {
-            report($exception);
-
-            return response()->json(['message' => $exception->getMessage()], 500);
-        }
-    }
-
-    private function registerInternal(Request $request): JsonResponse
-    {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255', 'unique:users,name'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],

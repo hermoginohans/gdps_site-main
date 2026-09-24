@@ -39,4 +39,4 @@ RUN mkdir -p storage/framework/cache \
     && chmod -R 775 storage bootstrap/cache
 
 # Start Laravel
-CMD php artisan migrate --force --no-interaction || true; php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}

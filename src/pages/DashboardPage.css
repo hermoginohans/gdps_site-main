@@ -1,0 +1,35 @@
+.dashboard-layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); gap: 34px; align-items: start; }
+.dashboard-navigation { display: grid; gap: 8px; padding: 10px; background: #141020aa; border: 1px solid #302744; border-radius: 18px; }
+.dashboard-navigation button { display: flex; align-items: center; gap: 12px; text-align: left; padding: 14px 16px; border-radius: 10px; color: #c4c1d0; font-size: 12px; font-weight: 700; }
+.dashboard-navigation button svg { width: 19px; height: 19px; flex-shrink: 0; color: #ffcf45; }
+.dashboard-navigation button:hover { background: #ffffff08; color: white; }
+.dashboard-navigation button[aria-current=page] { background: linear-gradient(110deg, #ffda57, #f2bf2e); color: #17111f; }
+.dashboard-navigation button[aria-current=page] svg { color: inherit; }
+.dashboard-wallet-card { padding: 28px; border: 1px solid #79642e; border-radius: 17px; background: linear-gradient(120deg, #242038, #19152b); }
+.dashboard-wallet-card h3 { color: #f0eaf9; font-size: 13px; text-transform: uppercase; font-weight: 700; padding-bottom: 18px; border-bottom: 1px solid #77602d; }
+.dashboard-wallet-input { width: 100%; min-width: 0; padding: 14px 16px; border-radius: 12px; border: 1px solid #514469; background: #29213f; color: white; }
+.dashboard-navigation button:focus-visible, .dashboard-wallet-input:focus-visible { outline: 2px solid #ffd255; outline-offset: 3px; }
+@media (max-width: 800px) { .dashboard-layout { grid-template-columns: 1fr; gap: 24px; } .dashboard-navigation { display: flex; overflow-x: auto; } .dashboard-navigation button { white-space: nowrap; flex-shrink: 0; padding: 12px; } .dashboard-wallet-card { padding: 20px; } }
+.dashboard-gift-cards { max-width: 640px; padding: 6px 0 24px; }
+.dashboard-gift-cards h2 { color: #f5f0eb; font-family: Outfit, sans-serif; font-size: 27px; font-weight: 800; text-transform: uppercase; }
+.gift-card-tabs { display: flex; gap: 16px; border-bottom: 1px solid #77602d; margin: 16px 0 30px; }
+.gift-card-tabs button { padding: 10px 8px 14px; border-bottom: 2px solid transparent; color: #d5d0da; font-size: 13px; font-weight: 600; }
+.gift-card-tabs button[aria-pressed=true] { color: #ffce32; border-bottom-color: #ffce32; }
+.gift-card-heading { font-family: Outfit, sans-serif; font-size: 25px; color: #f5c735; font-weight: 800; text-transform: uppercase; margin-bottom: 28px; }
+.gift-denominations { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.gift-denomination { position: relative; display: flex; flex-direction: column; justify-content: flex-end; min-height: 100px; border: 1px solid #40384e; background: linear-gradient(125deg, #ffffff03, #25203880); border-radius: 13px; padding: 18px 16px; cursor: pointer; }
+.gift-denomination:hover { border-color: #8a7a99; }
+.gift-denomination.is-selected { border-color: #f4ca42; background: #ffcc4510; }
+.gift-denomination input { position: absolute; top: 12px; right: 12px; accent-color: #f4ca42; }
+.gift-denomination span { color: #e1dde8; font-size: 11px; margin-bottom: 6px; }
+.gift-denomination strong { color: #f4f0fa; font-size: 14px; }
+.gift-payment-select { padding: 23px 18px; background: #2c2549; border-color: transparent; border-radius: 16px; font-size: 13px; }
+.gift-card-submit { width: 100%; padding: 17px; background: linear-gradient(110deg, #ffcd46, #ffdc75); color: #211833; border-radius: 999px; font-size: 18px; font-weight: 800; text-transform: uppercase; }
+.gift-card-submit:disabled { opacity: .45; cursor: not-allowed; }
+.gift-card-tabs button:focus-visible, .gift-denomination:focus-within { outline: 2px solid #ffce42; outline-offset: 3px; }
+.dashboard-partner-registration { padding: 32px clamp(20px, 5vw, 72px) 42px; border: 1px solid #8b7435; border-radius: 16px; background: linear-gradient(125deg, #342c46, #211c34); box-shadow: inset 0 2px 8px #ffd15212; text-align: center; }
+.dashboard-partner-registration h2 { padding-bottom: 24px; border-bottom: 1px solid #816d31; color: #f1ecf5; font-family: Outfit, sans-serif; font-size: 14px; line-height: 1.6; font-weight: 700; }
+.dashboard-partner-contact { display: flex; align-items: center; justify-content: center; gap: 18px; padding-top: 34px; color: #f6f1e8; }
+.dashboard-partner-contact a { min-height: 40px; padding: 10px 28px; border-radius: 999px; background: #f6f1e8; color: #211a2d; font-size: 13px; font-weight: 700; transition: background .2s; }
+.dashboard-partner-contact a:hover { background: #ffd65c; }
+.dashboard-partner-contact a:focus-visible { outline: 2px solid #ffd65c; outline-offset: 4px; }

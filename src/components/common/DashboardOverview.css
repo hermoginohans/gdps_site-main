@@ -1,0 +1,44 @@
+.account-overview { color: #ece8f1; }
+.account-overview-tabs { display: flex; gap: 20px; border-bottom: 1px solid #746029; margin-bottom: 24px; }
+.account-overview-tabs button { display: flex; align-items: center; gap: 9px; padding: 0 8px 14px; border-bottom: 2px solid transparent; font-size: 13px; color: #a9a5b6; }
+.account-overview-tabs button[aria-selected=true] { color: #ffcf32; border-color: #ffcf32; }
+.account-overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+.account-overview-stack { display: grid; gap: 16px; min-width: 0; }
+.account-overview-card { min-width: 0; padding: 23px; border: 1px solid #86702e; border-radius: 16px; background: linear-gradient(125deg, #302939e6, #24203ceF); box-shadow: inset 0 2px 9px #ffce4210; }
+.account-overview h2, .account-overview h3, .account-overview h4 { font-family: Outfit, sans-serif; font-size: 14px; font-weight: 650; }
+.account-overview p { font-size: 11px; line-height: 1.7; color: #b0a9be; }
+.account-welcome-heading, .account-points-heading { display: flex; align-items: center; gap: 12px; }
+.account-avatar { display: grid; place-items: center; width: 45px; height: 45px; flex-shrink: 0; border: 2px solid #b59430; border-radius: 50%; background: #e4d1a81a; }
+.account-status { margin-left: auto; padding: 4px 10px; border-radius: 999px; border: 1px solid #696071; background: #ffffff0a; font-size: 9px; white-space: nowrap; }
+.account-contact { display: flex; align-items: center; gap: 9px; border-top: 1px solid #756331; margin-top: 17px; padding-top: 15px; font-size: 11px; color: #bdb5cb; overflow-wrap: anywhere; }
+.account-contact svg { flex-shrink: 0; }
+.account-card-heading { border-bottom: 1px solid #86702e; padding-bottom: 17px; margin-bottom: 18px; }
+.account-balance-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.account-balance-row > div { flex: 1; }
+.account-unavailable { font-size: 19px; font-weight: 700; }
+.account-history { padding: 8px; color: #b0a9be; }
+.account-gold-button { padding: 10px 23px; border-radius: 999px; background: #f8c735; color: #21172d; font-size: 12px; font-weight: 600; box-shadow: 0 0 20px #ffcb4520; }
+.account-points-heading { border-bottom: 1px solid #aa8a31; padding-bottom: 17px; }
+.account-points-icon { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: #ffffff15; }
+.account-points-heading .account-status { text-transform: uppercase; font-weight: 700; border: 0; }
+.account-points-total { padding: 18px 0 22px; }
+.account-points-total strong { font-size: 30px; font-weight: 750; }
+.account-redeem { display: flex; align-items: center; gap: 15px; padding: 15px; border: 1px solid #686074; border-radius: 12px; background: #ffffff04; }
+.account-redeem p { margin-top: 5px; }
+.account-redeem button { flex-shrink: 0; border: 1px solid #e0bd62; border-radius: 999px; padding: 10px 14px; color: #251a35; background: #f8f1e6; font-size: 10px; font-weight: 700; }
+.account-recent { border-top: 1px solid #8c732b; padding-top: 15px; margin-top: 22px; }
+.account-recent h4 { text-transform: uppercase; font-size: 11px; color: #bbb3c7; margin-bottom: 9px; }
+.account-transaction-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.account-transaction-stats > div { display: flex; flex-direction: column; text-align: center; gap: 6px; padding: 12px 4px; border: 1px solid #554539; border-radius: 12px; background: #ffffff04; }
+.account-transaction-stats strong { font-size: 24px; }
+.account-transaction-stats span { font-size: 10px; color: #b8afc4; }
+.account-data-note { margin-top: 12px; }
+.account-history-empty { padding: 32px 5px; text-align: center; color: #a79bb8; }
+.account-history-empty svg { margin: 0 auto 15px; }
+.account-history-empty p { margin-top: 8px; }
+.account-inbox { text-align: center; padding: 50px 24px; }
+.account-inbox > svg { margin: 0 auto 15px; color: #ffcc42; }
+.account-inbox p { margin-top: 8px; }
+.account-overview button:focus-visible { outline: 2px solid #ffce42; outline-offset: 3px; }
+@media (max-width: 1150px) { .account-overview-grid { grid-template-columns: 1fr; } .account-transaction-history { min-height: 260px; } }
+@media (max-width: 500px) { .account-overview-card { padding: 18px; } .account-redeem { flex-direction: column; align-items: flex-start; } .account-welcome-heading { flex-wrap: wrap; } .account-transaction-stats { gap: 6px; } }

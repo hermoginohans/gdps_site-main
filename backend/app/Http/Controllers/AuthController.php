@@ -1,0 +1,174 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password as PasswordBroker;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
+use Laravel\Socialite\Facades\Socialite;
+
+class AuthController extends Controller
+{
+    public function availability(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'field' => ['required', 'in:name,email'],
+            'value' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validated['field'] === 'email') {
+            $request->validate(['value' => ['email']]);
+        }
+
+        return response()->json([
+            'available' => ! User::where($validated['field'], $validated['value'])->exists(),
+        ])->header('Cache-Control', 'no-store');
+    }
+
+    public function register(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255', 'unique:users,name'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ], [
+            'name.unique' => 'This nickname is already used.',
+            'email.unique' => 'This email is already used.',
+        ]);
+
+        $user = User::create($validated);
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return response()->json(['user' => $this->profile($user)], 201);
+    }
+
+    public function login(Request $request): JsonResponse
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Auth::attempt($credentials)) {
+            return response()->json(['message' => 'The provided credentials are incorrect.'], 422);
+        }
+
+        if ($request->user()->is_disabled) {
+            Auth::guard('web')->logout();
+
+            return response()->json(['message' => 'This account has been disabled. Contact support for help.'], 403);
+        }
+
+        $request->session()->regenerate();
+
+        return response()->json(['user' => $this->profile($request->user())]);
+    }
+
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate(['email' => ['required', 'email']]);
+        $status = PasswordBroker::sendResetLink(['email' => $validated['email']]);
+
+        if ($status !== PasswordBroker::RESET_LINK_SENT) {
+            return response()->json(['message' => __($status)], 422);
+        }
+
+        return response()->json(['message' => 'Password reset instructions have been sent.']);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'token' => ['required', 'string'],
+            'email' => ['required', 'email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+        $status = PasswordBroker::reset($validated, function (User $user, string $password): void {
+            $user->forceFill(['password' => Hash::make($password), 'remember_token' => Str::random(60)])->save();
+        });
+
+        if ($status !== PasswordBroker::PASSWORD_RESET) {
+            return response()->json(['message' => __($status)], 422);
+        }
+
+        return response()->json(['message' => 'Password reset successfully.']);
+    }
+
+    public function user(Request $request): JsonResponse
+    {
+        return response()->json(['user' => $this->profile($request->user())]);
+    }
+
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(null, 204);
+    }
+
+    public function googleRedirect(): RedirectResponse
+    {
+        if (! config('services.google.client_id') || ! config('services.google.client_secret')) {
+            return redirect()->to(rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/').'/login?oauth=not-configured');
+        }
+
+        return Socialite::driver('google')->redirect();
+    }
+
+    public function googleCallback(Request $request): RedirectResponse
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            $user = User::where('google_id', $googleUser->getId())
+                ->orWhere('email', $googleUser->getEmail())
+                ->first();
+
+            if (! $user) {
+                $user = User::create([
+                    'name' => $googleUser->getName() ?: $googleUser->getNickname() ?: 'GPDS Gamer',
+                    'email' => $googleUser->getEmail(),
+                    'password' => Hash::make(Str::random(40)),
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                ]);
+            } else {
+                $user->forceFill([
+                    'google_id' => $user->google_id ?: $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar() ?: $user->avatar,
+                ])->save();
+            }
+
+            Auth::login($user);
+            $request->session()->regenerate();
+
+            return redirect()->to(rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/').'/dashboard');
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()->to(rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/').'/login?oauth=failed');
+        }
+    }
+
+    private function profile(User $user): array
+    {
+        return [
+            'id' => (string) $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'avatar' => $user->avatar ?: 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=F0C030&color=151125',
+            'vipTier' => 'Bronze',
+            'loyaltyPoints' => (int) $user->loyalty_points,
+            'isAdmin' => (bool) $user->is_admin,
+            'savedAccounts' => [],
+        ];
+    }
+}

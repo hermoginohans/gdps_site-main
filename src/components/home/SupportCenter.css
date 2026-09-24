@@ -1,0 +1,45 @@
+.support-center { display: grid; grid-template-columns: minmax(0, .88fr) minmax(0, 1.75fr); gap: clamp(32px, 5vw, 76px); padding-top: 28px; padding-bottom: 36px; }
+.support-intro { min-width: 0; }
+.support-eyebrow { display: inline-flex; padding: 6px 17px; border: 1px solid #a47723; border-radius: 999px; background: #f5a6230a; color: #ffc94f; text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .035em; }
+.support-intro h2 { margin: 22px 0 16px; color: #fafaff; font-family: Outfit, sans-serif; font-size: clamp(42px, 4.6vw, 64px); line-height: 1.03; font-weight: 800; letter-spacing: -.045em; }
+.support-intro h2 > span { color: #ffca48; }
+.support-description { max-width: 340px; color: #aeb8cf; font-size: 16px; line-height: 1.7; }
+.support-contact { margin-top: 30px; padding: 22px 18px; display: flex; align-items: flex-start; gap: 17px; border: 1px solid #302c4b; border-radius: 14px; background: linear-gradient(120deg, #19162be6, #11101ee6); }
+.support-headset { display: grid; place-items: center; flex-shrink: 0; width: 59px; height: 68px; border-radius: 12px; border: 1px solid #f5a62330; color: #ffad44; background: #f5a6230a; }
+.support-contact > div { flex: 1; }
+.support-contact h3 { font-family: Outfit, sans-serif; font-size: 18px; font-weight: 700; color: white; }
+.support-contact p { color: #aeb8cf; font-size: 13px; margin: 4px 0 15px; }
+.support-contact-link { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 9px; background: linear-gradient(110deg, #ffd650, #f4ad23); color: #171008; font-size: 13px; font-weight: 700; transition: filter .2s; }
+.support-contact-link:hover { filter: brightness(1.1); }
+.support-benefits { display: flex; justify-content: space-between; gap: 10px; margin-top: 30px; }
+.support-benefits > span { display: flex; align-items: center; gap: 9px; color: #adb7ce; font-size: 10px; line-height: 1.6; }
+.support-benefits svg { width: 22px; height: 26px; color: #38cde3; stroke-width: 1.4; flex-shrink: 0; }
+.support-tagline { display: flex; align-items: center; gap: 15px; margin-top: 29px; color: #8e9ab7; font-size: 9px; text-transform: uppercase; letter-spacing: .28em; white-space: nowrap; }
+.support-tagline::before, .support-tagline::after { content: ''; height: 1px; background: #302c4b; flex: 1; }
+.support-questions { min-width: 0; }
+.support-search { display: flex; align-items: center; gap: 14px; padding: 17px 20px; border: 1px solid #373052; border-radius: 12px; background: linear-gradient(110deg, #171426ed, #12111fed); color: #c5cce0; }
+.support-search:focus-within { border-color: #ffc94f; box-shadow: 0 0 0 2px #ffc94f15; }
+.support-search input { width: 100%; min-width: 0; background: transparent; border: 0; outline: none; color: white; font-size: 14px; }
+.support-search input::placeholder { color: #929db7; }
+.support-categories { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 18px; }
+.support-categories button { padding: 10px 26px; border: 1px solid #302b49; border-radius: 11px; background: #141121bd; color: #ced3e2; font-size: 13px; transition: border-color .2s, background .2s; }
+.support-categories button:hover { border-color: #897044; }
+.support-categories button[aria-pressed=true] { border-color: #f5b82e; background: linear-gradient(120deg, #f5a62321, #f5a62308); color: #ffce4e; box-shadow: 0 3px 16px #f5a62308; }
+.support-accordion { display: grid; gap: 12px; }
+.support-item { border: 1px solid #302b49; border-radius: 13px; background: linear-gradient(115deg, #151322ed, #100e1bed); overflow: hidden; }
+.support-item.is-open { border-color: #413558; }
+.support-item h3 > button { width: 100%; display: flex; align-items: center; gap: 19px; padding: 18px; text-align: left; color: #fafaff; }
+.support-item h3 > button:hover { background: #ffffff03; }
+.support-number { display: grid; place-items: center; width: 36px; height: 38px; flex-shrink: 0; border: 1px solid #322c49; border-radius: 7px; color: #c4cce4; font-size: 13px; font-weight: 400; }
+.support-question-text { flex: 1; font-family: Outfit, sans-serif; font-size: 16px; line-height: 1.4; font-weight: 650; }
+.support-toggle { display: grid; place-items: center; width: 35px; height: 36px; border: 1px solid #48516a; border-radius: 8px; flex-shrink: 0; }
+.is-open .support-toggle { color: #ffd04f; border-color: #f5b82e; background: #f5a6230d; }
+.support-answer { margin: 0 20px 0 73px; padding: 17px 0 24px; border-top: 1px solid #2c2740; color: #bcc3d5; font-size: 14px; line-height: 1.85; }
+.support-about { display: inline-flex; align-items: center; gap: 7px; margin-top: 17px; color: #ffce4e; font-size: 13px; font-weight: 600; }
+.support-about:hover { text-decoration: underline; }
+.support-empty { padding: 35px 20px; border: 1px solid #302b49; border-radius: 13px; color: #bcc3d5; text-align: center; }
+.support-empty h3 { color: white; font-weight: 700; margin-bottom: 8px; }
+.support-empty button { display: inline-flex; align-items: center; gap: 8px; margin-top: 15px; color: #ffce4e; }
+.support-center button:focus-visible, .support-center a:focus-visible { outline: 2px solid #ffce4e; outline-offset: 4px; }
+@media (max-width: 900px) { .support-center { grid-template-columns: 1fr; gap: 32px; } .support-intro { display: grid; grid-template-columns: 1fr 1fr; column-gap: 30px; align-items: start; } .support-eyebrow, .support-intro h2, .support-description { grid-column: 1; } .support-contact { grid-column: 2; grid-row: 2 / 4; margin-top: 22px; } .support-benefits { grid-column: 2; margin-top: 20px; } .support-tagline { grid-column: 1; align-self: center; } }
+@media (max-width: 600px) { .support-intro { display: block; } .support-intro h2 { font-size: 52px; } .support-description { max-width: 100%; } .support-contact { margin-top: 24px; } .support-benefits { justify-content: space-around; } .support-tagline { margin-top: 22px; } .support-categories { gap: 8px; } .support-categories button { flex: 1; padding: 10px 9px; font-size: 12px; } .support-item h3 > button { padding: 15px 12px; gap: 11px; } .support-question-text { font-size: 14px; } .support-number { width: 29px; height: 33px; font-size: 11px; } .support-toggle { width: 29px; height: 31px; } .support-answer { margin: 0 16px; font-size: 13px; } }

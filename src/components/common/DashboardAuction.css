@@ -1,0 +1,15 @@
+.dashboard-auction > h2 { margin-bottom: 24px; color: #ffd137; font-family: Outfit, sans-serif; font-size: 27px; font-weight: 800; text-transform: uppercase; }
+.dashboard-auction-card { padding: 46px 28px; border: 1px solid #bf9726; border-radius: 16px; background: radial-gradient(ellipse at top left, #b8993320, transparent 60%), linear-gradient(125deg, #322b40, #231e3e); text-align: center; }
+.dashboard-auction-emblem { display: grid; place-items: center; width: 78px; height: 78px; margin: 0 auto 22px; border-radius: 50%; background: #e7b4332b; color: #ffce33; }
+.dashboard-auction-card h3 { color: #f5f0ea; font-family: Outfit, sans-serif; font-size: clamp(23px, 2.5vw, 31px); font-weight: 750; line-height: 1.2; }
+.dashboard-auction-description { max-width: 650px; margin: 20px auto 25px; color: #aaa0b9; font-size: 14px; line-height: 1.8; }
+.dashboard-auction-register { display: inline-flex; align-items: center; justify-content: center; gap: 10px; border-radius: 999px; padding: 17px 26px; color: #241832; background: linear-gradient(110deg, #f5c32b, #ffda47); font-size: 17px; font-weight: 750; box-shadow: 0 0 25px #ffcd3d28; }
+.dashboard-auction-register:hover { background: #ffdd65; }
+.dashboard-auction-register:focus-visible { outline: 2px solid #ffe6a2; outline-offset: 5px; }
+.dashboard-auction-contact-note { margin-top: 12px; color: #b4aabe; font-size: 11px; }
+.dashboard-auction-highlights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; max-width: 680px; margin: 28px auto 0; }
+.dashboard-auction-highlights > div { padding: 18px 10px; border-radius: 10px; background: #2d2547b3; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.dashboard-auction-highlights svg { color: #ffcb32; width: 22px; height: 22px; }
+.dashboard-auction-highlights strong { font-size: 13px; color: #ffcf3b; }
+.dashboard-auction-highlights span { font-size: 10px; color: #b0a4bf; }
+@media (max-width: 550px) { .dashboard-auction-card { padding: 30px 18px; } .dashboard-auction-highlights { grid-template-columns: 1fr; gap: 10px; } .dashboard-auction-register { width: 100%; padding: 15px 12px; font-size: 15px; } }

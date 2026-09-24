@@ -1,0 +1,45 @@
+.store-hero { padding: 34px 0 0; background: radial-gradient(ellipse at 80% 70%, #d08d1310, transparent 55%), linear-gradient(130deg, #101321ed, #0c0b18e8); }
+.store-hero-grid { display: grid; grid-template-columns: .9fr 1.25fr; align-items: center; gap: 45px; }
+.store-hero-pill { display: inline-flex; align-items: center; gap: 10px; padding: 8px 15px; border: 1px solid #98762d; border-radius: 999px; color: #ffd15b; background: #ffc94f09; font-size: 10px; letter-spacing: .12em; font-weight: 700; text-transform: uppercase; }
+.store-hero h1 { margin: 20px 0; color: #fafaff; font-family: Outfit, sans-serif; font-size: clamp(42px, 4.6vw, 65px); font-weight: 850; letter-spacing: -.045em; line-height: 1.02; }
+.store-hero h1 span { color: #ffcd4a; }
+.store-hero-copy > p { color: #bfc7da; font-size: 15px; line-height: 1.65; }
+.store-hero-actions { display: flex; gap: 14px; margin-top: 24px; }
+.store-hero-actions a, .hero-deal { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+.hero-topup, .hero-deal { background: linear-gradient(115deg, #ffdd70, #ffc231); color: #16110a; border: 1px solid #ffe290; }
+.hero-explore { border: 1px solid #75649d; color: #fafaff; background: #11101e; }
+.hero-explore svg { color: #ffcd4a; }
+.store-hero-copy > .store-hero-games { font-size: 11px; margin-top: 15px; color: #929ab4; }
+.store-hero-benefits { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid #353048; margin-top: 18px; padding-top: 20px; }
+.store-hero-benefits span { display: flex; align-items: center; gap: 9px; font-size: 11px; color: #c0c7da; }
+.store-hero-benefits svg { width: 22px; color: #ffd04f; flex-shrink: 0; }
+.store-hero-benefits span:nth-child(2) svg { color: #25d9ed; }
+.hero-carousel { min-width: 0; border: 1px solid #eac04a; border-radius: 18px; background: #0e101d; overflow: hidden; box-shadow: 0 12px 40px #ffc94f08; }
+.hero-promo { position: relative; min-height: 370px; aspect-ratio: 1.5; display: flex; align-items: flex-end; }
+.hero-promo > img { position: absolute; top: 0; width: 100%; height: 72%; object-fit: contain; background: #100d1f; }
+.hero-promo-featured > img { height: 100%; object-fit: cover; }
+.hero-promo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, #0e101d 0%, #0e101deb 8%, transparent 63%); pointer-events: none; }
+.hero-promo-tags { position: absolute; top: 15px; left: 15px; right: 15px; z-index: 1; display: flex; justify-content: space-between; gap: 10px; }
+.hero-promo-tags > span { display: flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 999px; border: 1px solid #c6a34b88; background: #0b0e1dde; color: white; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.hero-promo-tags > span:last-child { background: #ffd45b; color: #151015; }
+.hero-promo-copy { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 24px 24px 4px; width: 100%; }
+.hero-promo-copy p { color: #ffcf51; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; margin-bottom: 8px; }
+.hero-promo-copy h2 { font-family: Outfit, sans-serif; color: white; font-size: clamp(23px, 2.5vw, 34px); line-height: 1.1; font-weight: 800; }
+.hero-promo-copy div > span { display: block; margin-top: 9px; font-size: 12px; color: #b5bdd1; }
+.hero-deal { padding: 10px 12px; white-space: nowrap; font-size: 12px; }
+.hero-carousel-controls { display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; gap: 14px; }
+.hero-carousel-controls button { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid #65552e; border-radius: 50%; color: #ffcf51; }
+.hero-carousel-arrows, .hero-carousel-dots { display: flex; align-items: center; gap: 9px; }
+.hero-carousel-dots button { border: 0; width: 22px; border-radius: 5px; }
+.hero-carousel-dots span { width: 7px; height: 7px; border-radius: 999px; background: #75788e; }
+.hero-carousel-dots button[aria-current] { width: 32px; }
+.hero-carousel-dots button[aria-current] span { width: 29px; height: 8px; background: #ffca41; }
+.hero-shortcuts { display: grid; grid-template-columns: auto 1fr 1fr 1fr auto; gap: 15px; align-items: center; padding: 20px; border: 1px solid #403451; border-radius: 13px; margin-top: 35px; background: #11101edf; }
+.hero-shortcuts > span { text-transform: uppercase; letter-spacing: .1em; color: #ffd051; font-size: 9px; font-weight: 700; margin-right: 8px; }
+.hero-shortcuts a { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid #342b4e; border-radius: 9px; padding: 12px; font-size: 11px; font-weight: 600; }
+.hero-shortcuts a > svg:first-child { color: #ffcf51; flex-shrink: 0; }
+.hero-shortcuts .hero-browse { color: #ffcf51; border: 0; }
+.store-hero a:hover, .hero-carousel-controls button:hover { filter: brightness(1.15); }
+.store-hero a:focus-visible, .store-hero button:focus-visible { outline: 2px solid #ffcf51; outline-offset: 3px; }
+@media (max-width: 1050px) { .store-hero-grid { gap: 25px; grid-template-columns: 1fr 1.1fr; } .store-hero-actions { flex-wrap: wrap; } .hero-promo-copy { padding: 20px 16px 4px; flex-wrap: wrap; } .hero-shortcuts { grid-template-columns: repeat(3, 1fr); } .hero-shortcuts > span { grid-column: 1 / -1; } .hero-shortcuts .hero-browse { grid-column: 1 / -1; justify-content: center; } }
+@media (max-width: 760px) { .store-hero-grid { grid-template-columns: 1fr; gap: 28px; } .store-hero h1 { font-size: clamp(44px, 9vw, 64px); } .hero-promo { min-height: 340px; } .store-hero-actions { flex-wrap: nowrap; } .store-hero-actions a { flex: 1; padding: 13px 10px; font-size: 12px; gap: 7px; } .hero-shortcuts { grid-template-columns: 1fr; padding: 16px; gap: 10px; margin-top: 22px; } .hero-shortcuts a { font-size: 13px; } .hero-shortcuts > span { margin-bottom: 5px; } .hero-promo-copy h2 { font-size: 28px; } .store-hero-benefits { gap: 8px; } .store-hero-benefits span { font-size: 10px; gap: 6px; } }

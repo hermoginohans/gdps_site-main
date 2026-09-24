@@ -5,7 +5,7 @@ return [
     'allowed_methods' => ['*'],
     'allowed_origins' => array_values(array_unique(array_merge(
         [env('FRONTEND_URL', 'http://localhost:3000')],
-        ['https://gdps-site.vercel.app'],
+        ['https://gdps-site.vercel.app', 'https://gdps-site-demo.vercel.app'],
         env('APP_ENV') === 'local' ? ['http://localhost:3000', 'http://127.0.0.1:3000'] : [],
     ))),
     'allowed_origins_patterns' => [],
